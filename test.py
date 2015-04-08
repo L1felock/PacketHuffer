@@ -32,6 +32,7 @@ def getTOS(data):
     T >>= 3
 #   get the 5th bit and shift right
     R = data & 0x4
+    R = data & 0x4
     R >>= 2
 #   get the 6th bit and shift right
     M = data & 0x2
@@ -85,47 +86,49 @@ HOST = gethostbyname(gethostname())
 s = socket(AF_INET, SOCK_RAW, IPPROTO_IP)
 s.bind((HOST, 3000))
 
-# Include IP headers
-s.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
-s.ioctl(SIO_RCVALL, RCVALL_ON)
-data = receiveData(s)
+while (1):
 
-# get the IP header (the first 20 bytes) and unpack them
-# B - unsigned char (1)
-# H - unsigned short (2)
-# s - string
-unpackedData = struct.unpack('!BBHHHBBH4s4s' , data[:20])
+    # Include IP headers
+    s.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
+    s.ioctl(SIO_RCVALL, RCVALL_ON)
+    data = receiveData(s)
 
-version_IHL = unpackedData[0]
-version = version_IHL >> 4                  # version of the IP
-IHL = version_IHL & 0xF                     # internet header length
-TOS = unpackedData[1]                       # type of service
-totalLength = unpackedData[2]
-ID = unpackedData[3]                        # identification
-flags = unpackedData[4]
-fragmentOffset = unpackedData[4] & 0x1FFF
-TTL = unpackedData[5]                       # time to live
-protocolNr = unpackedData[6]
-checksum = unpackedData[7]
-sourceAddress = inet_ntoa(unpackedData[8])
-destinationAddress = inet_ntoa(unpackedData[9])
+    # get the IP header (the first 20 bytes) and unpack them
+    # B - unsigned char (1)
+    # H - unsigned short (2)
+    # s - string
+    unpackedData = struct.unpack('!BBHHHBBH4s4s' , data[:20])
+
+    version_IHL = unpackedData[0]
+    version = version_IHL >> 4                  # version of the IP
+    IHL = version_IHL & 0xF                     # internet header length
+    TOS = unpackedData[1]                       # type of service
+    totalLength = unpackedData[2]
+    ID = unpackedData[3]                        # identification
+    flags = unpackedData[4]
+    fragmentOffset = unpackedData[4] & 0x1FFF
+    TTL = unpackedData[5]                       # time to live
+    protocolNr = unpackedData[6]
+    checksum = unpackedData[7]
+    sourceAddress = inet_ntoa(unpackedData[8])
+    destinationAddress = inet_ntoa(unpackedData[9])
 
 
-print "An IP packet with the size %i was captured." % (unpackedData[2])
-print "Raw data: " + data
-print "\nParsed data"
-print "Version:\t\t" + str(version)
-print "Header Length:\t\t" + str(IHL*4) + " bytes"
-print "Type of Service:\t" + getTOS(TOS)
-print "Length:\t\t\t" + str(totalLength)
-print "ID:\t\t\t" + str(hex(ID)) + " (" + str(ID) + ")"
-print "Flags:\t\t\t" + getFlags(flags)
-print "Fragment offset:\t" + str(fragmentOffset)
-print "TTL:\t\t\t" + str(TTL)
-print "Protocol:\t\t" + getProtocol(protocolNr)
-print "Checksum:\t\t" + str(checksum)
-print "Source:\t\t\t" + sourceAddress
-print "Destination:\t\t" + destinationAddress
-print "Payload:\n" + data[20:]
+    print "An IP packet with the size %i was captured." % (unpackedData[2])
+    print "Raw data: " + data
+    print "\nParsed data"
+    print "Version:\t\t" + str(version)
+    print "Header Length:\t\t" + str(IHL*4) + " bytes"
+    print "Type of Service:\t" + getTOS(TOS)
+    print "Length:\t\t\t" + str(totalLength)
+    print "ID:\t\t\t" + str(hex(ID)) + " (" + str(ID) + ")"
+    print "Flags:\t\t\t" + getFlags(flags)
+    print "Fragment offset:\t" + str(fragmentOffset)
+    print "TTL:\t\t\t" + str(TTL)
+    print "Protocol:\t\t" + getProtocol(protocolNr)
+    print "Checksum:\t\t" + str(checksum)
+    print "Source:\t\t\t" + sourceAddress
+    print "Destination:\t\t" + destinationAddress
+    print "Payload:\n" + data[20:]
 # disabled promiscuous mode
 s.ioctl(SIO_RCVALL, RCVALL_OFF)
