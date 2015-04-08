@@ -86,6 +86,9 @@ HOST = gethostbyname(gethostname())
 s = socket(AF_INET, SOCK_RAW, IPPROTO_IP)
 s.bind((HOST, 3000))
 
+# open file
+fp = open("log.txt", "w")
+
 while (1):
 
     # Include IP headers
@@ -113,22 +116,43 @@ while (1):
     sourceAddress = inet_ntoa(unpackedData[8])
     destinationAddress = inet_ntoa(unpackedData[9])
 
+    # write to file
 
-    print "An IP packet with the size %i was captured." % (unpackedData[2])
-    print "Raw data: " + data
-    print "\nParsed data"
-    print "Version:\t\t" + str(version)
-    print "Header Length:\t\t" + str(IHL*4) + " bytes"
-    print "Type of Service:\t" + getTOS(TOS)
-    print "Length:\t\t\t" + str(totalLength)
-    print "ID:\t\t\t" + str(hex(ID)) + " (" + str(ID) + ")"
-    print "Flags:\t\t\t" + getFlags(flags)
-    print "Fragment offset:\t" + str(fragmentOffset)
-    print "TTL:\t\t\t" + str(TTL)
-    print "Protocol:\t\t" + getProtocol(protocolNr)
-    print "Checksum:\t\t" + str(checksum)
-    print "Source:\t\t\t" + sourceAddress
-    print "Destination:\t\t" + destinationAddress
-    print "Payload:\n" + data[20:]
+    fp.write("An IP packet with the size %i was captured.\n" % (unpackedData[2]))
+    #print "An IP packet with the size %i was captured." % (unpackedData[2])
+    fp.write("Raw data: " + data + "\n")
+    #print "Raw data: " + data
+    fp.write("\nParsed data\n")
+    #print "\nParsed data"
+    fp.write("Version:\t\t" + str(version) + "\n")
+    #print "Version:\t\t" + str(version)
+    fp.write("Header Length:\t\t" + str(IHL*4) + " bytes")
+    #print "Header Length:\t\t" + str(IHL*4) + " bytes"
+    fp.write("Type of Service:\t" + getTOS(TOS))
+    #print "Type of Service:\t" + getTOS(TOS)
+    fp.write("Length:\t\t\t" + str(totalLength))
+    #print "Length:\t\t\t" + str(totalLength)
+    fp.write("ID:\t\t\t" + str(hex(ID)) + " (" + str(ID) + ")")
+    #print "ID:\t\t\t" + str(hex(ID)) + " (" + str(ID) + ")"
+    fp.write("Flags:\t\t\t" + getFlags(flags))
+    #print "Flags:\t\t\t" + getFlags(flags)
+    fp.write("Fragment offset:\t" + str(fragmentOffset))
+    #print "Fragment offset:\t" + str(fragmentOffset)
+    fp.write("TTL:\t\t\t" + str(TTL))
+    #print "TTL:\t\t\t" + str(TTL)
+    fp.write("Protocol:\t\t" + getProtocol(protocolNr))
+    #print "Protocol:\t\t" + getProtocol(protocolNr)
+    fp.write("Checksum:\t\t" + str(checksum))
+    #print "Checksum:\t\t" + str(checksum)
+    fp.write("Source:\t\t\t" + sourceAddress)
+    #print "Source:\t\t\t" + sourceAddress
+    fp.write("Destination:\t\t" + destinationAddress)
+    #print "Destination:\t\t" + destinationAddress
+    fp.write("Payload:\n" + data[20:])
+    #print "Payload:\n" + data[20:]
+    fp.write("\n==============================================================\n")
 # disabled promiscuous mode
 s.ioctl(SIO_RCVALL, RCVALL_OFF)
+
+# close file pointer
+fp.close()
