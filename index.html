@@ -57,9 +57,12 @@
                 .selected {
                     background: silver;
                 }
-                .wrapper-top, .wrapper-bottom {
+                
+                .wrapper-top,
+                .wrapper-bottom {
                     padding: 20px;
                 }
+                
                 .wrapper-bottom {
                     font-size: 20px;
                 }
@@ -77,16 +80,18 @@
                     </div>
                 </div>
                 <div class="data">
-		    <div horizontal layout>
-  			<div>Alpha</div>
-  			<div flex>Beta (flex)</div>
-  			<div>Gamma</div>
-		    </div>
+                    <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
+                        <div flex># </div>
+                        <div flex>Source </div>
+                        <div flex>Destination </div>
+                        <div flex>Protocol </div>
+                        <div flex>Length </div>
+                    </div>
                     <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
                         <template>
                             <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
                                 <div flex> {{model.id}} </div>
-                                <div flex> {{model.source}} </div>
+                                <div flex> {{model.sourceAddress}} </div>
                                 <div flex> {{model.destinationAddress}} </div>
                                 <div flex> {{model.protocol}} </div>
                                 <div flex> {{model.length}} </div>
