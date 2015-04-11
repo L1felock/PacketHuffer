@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#990000">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>PacketHuffer</title>
+    <meta name="Author" content="" />
+
+    <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
+    <link rel="import" href="bower_components/polymer/polymer.html">
+    <link rel="import" href="bower_components/font-roboto/roboto.html">
+    <link rel="import" href="bower_components/paper-button/paper-button.html">
+    <link rel="import" href="bower_components/core-ajax/core-ajax.html">
+    <link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
+    <link rel="import" href="bower_components/core-list/core-list.html">
+
+    <style>
+        html,
+        body {
+            font-family: 'RobotoDraft', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <polymer-element name="packet-huffer">
+        <template>
+            <style>
+                .wrapper {
+                    //padding: 20px;
+                }
+                
+                core-list {
+                    height: 500px;
+                }
+                
+                .row {
+                    padding: 20px;
+                    border-bottom: 1px solid #ccc;
+                    cursor: pointer;
+                }
+                
+                .selection-display {
+                    background: lightgray;
+                }
+                
+                .selected {
+                    background: silver;
+                }
+                .wrapper-top, .wrapper-bottom {
+                    padding: 20px;
+                }
+                .wrapper-bottom {
+                    font-size: 20px;
+                }
+            </style>
+
+            <div class="wrapper">
+                <div horizontal layout center class="wrapper-top">
+                    <div>
+                        <paper-button on-tap="{{startPH}}">
+                            <paper-spinner active="{{loading}}"></paper-spinner>
+                            Start</paper-button>
+                    </div>
+                    <div>
+                        <paper-button on-tap="{{stopPH}}">Stop</paper-button>
+                    </div>
+                </div>
+                <div class="data">
+                    <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
+                        <template>
+                            <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
+                                <div flex> {{model.id}} </div>
+                                <div flex> {{model.source}} </div>
+                                <div flex> {{model.destination}} </div>
+                                <div flex> {{model.protocol}} </div>
+                                <div flex> {{model.length}} </div>
+                            </div>
+                        </template>
+                    </core-list>
+                </div>
+            </div>
+
+            <div class="wrapper-bottom">
+                {{selectedItem.data}}
+            </div>
+
+            <core-ajax loading="{{loading}}" progress={{progress}} id="startPH" auto="false" method="GET" contentType="application/json" url="cgi-bin/app.py" response="{{response}}" on-core-response="{{infoloaded}}" handleAs="json">
+            </core-ajax>
+
+            <core-ajax loading="{{loading2}}" id="controller" auto="false" method="GET" contentType="application/json" url="cgi-bin/controller.py?status={{status}}" response="{{response2}}" handleAs="json">
+            </core-ajax>
+
+            <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="log.json" response="{{response3}}" handleAs="json">
+            </core-ajax>
+        </template>
+
+
+        <script>
+            Polymer({
+                ready: function () {
+                    this.status = "start";
+                    this.$.controller.go();
+                },
+                startPH: function () {
+                    this.status = "start";
+                    this.$.controller.go();
+                    this.$.startPH.go();
+                    //this.updateData();
+                },
+                updateData: function () {
+                    this.$.data.go();
+                    if (this.status == "start") {
+                        //this.async(this.updateData, null, 200);
+                    }
+                },
+                stopPH: function () {
+                    this.status = "stop";
+                    //this.$.startPH.abort();
+                    this.$.controller.go();
+                    this.updateData();
+                    this.updateData();
+                },
+                selectionChanged: function () {
+                    this.selectedItem = this.$.list.selection;
+                }
+            });
+        </script>
+
+    </polymer-element>
+
+    <packet-huffer></packet-huffer>
+
+</body>
+
+</html>
