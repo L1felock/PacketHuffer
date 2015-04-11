@@ -1,4 +1,5 @@
 from socket import *
+import json
 import struct
 import sys
 import re
@@ -115,29 +116,35 @@ while 1:
     # s - string
     unpackedData = struct.unpack('!BBHHHBBH4s4s' , data[:20])
 
-    version_IHL = unpackedData[0]
-    version = version_IHL >> 4                  # version of the IP
-    IHL = version_IHL & 0xF                     # internet header length
-    TOS = unpackedData[1]                       # type of service
-    totalLength = unpackedData[2]
-    ID = unpackedData[3]                        # identification
-    flags = unpackedData[4]
-    fragmentOffset = unpackedData[4] & 0x1FFF
-    TTL = unpackedData[5]                       # time to live
-    protocolNr = unpackedData[6]
-    checksum = unpackedData[7]
-    sourceAddress = inet_ntoa(unpackedData[8])
-    destinationAddress = inet_ntoa(unpackedData[9])
+    headerInfo = dict() #stores all of the packet header info
 
-    fp.write("{")
-    fp.write('"id":"' + str(count) + '","0":"' + str(count) + '",')
-    fp.write('"source":"' + sourceAddress + '","1":"' + sourceAddress + '",')
-    fp.write('"destination":"' + destinationAddress + '","2":"' + destinationAddress + '",')
-    fp.write('"protocol":"' + getProtocol(protocolNr) + '","3":"' + getProtocol(protocolNr) + '",')
-    fp.write('"length":"' + str(totalLength) + '","4":"' + str(totalLength) + '",')
-    fp.write('"data":"' + 'How to parse non-unicode characters?' + '","5":"' + 'How to parse non-unicode characters?' + '"')
-    fp.write("}")
+    headerInfo["version_IHL"] = unpackedData[0]
+    headerInfo["version"] = version_IHL >> 4                  # version of the IP
+    headerInfo["IHL"] = version_IHL & 0xF                     # internet header length
+    headerInfo["TOS"] = unpackedData[1]                       # type of service
+    headerInfo["totalLength"] = unpackedData[2]
+    headerInfo["ID"] = unpackedData[3]                        # identification
+    headerInfo["flags"] = unpackedData[4]
+    headerInfo["fragmentOffset"] = unpackedData[4] & 0x1FFF
+    headerInfo["TTL"] = unpackedData[5]                       # time to live
+    headerInfo["protocolNr"] = unpackedData[6]
+    headerInfo["checksum"] = unpackedData[7]
+    headerInfo["sourceAddress"] = inet_ntoa(unpackedData[8])
+    headerInfo["destinationAddress"] = inet_ntoa(unpackedData[9])
 
+
+    fp.write(json.dumps(headerInfo, ensure_ascii=False)
+
+    
+    #fp.write("{")
+    #fp.write('"id":"' + str(count) + '","0":"' + str(count) + '",')
+    #fp.write('"source":"' + sourceAddress + '","1":"' + sourceAddress + '",')
+    #fp.write('"destination":"' + destinationAddress + '","2":"' + destinationAddress + '",')
+    #fp.write('"protocol":"' + getProtocol(protocolNr) + '","3":"' + getProtocol(protocolNr) + '",')
+    #fp.write('"length":"' + str(totalLength) + '","4":"' + str(totalLength) + '",')
+    #fp.write('"data":"' + 'How to parse non-unicode characters?' + '","5":"' + 'How to parse non-unicode characters?' + '"')
+    #fp.write("}")
+   
 
 
     #fp.write("%i\n" % (unpackedData[2]))
