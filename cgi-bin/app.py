@@ -116,6 +116,22 @@ while 1:
     # s - string
     unpackedData = struct.unpack('!BBHHHBBH4s4s' , data[:20])
 
+    version_IHL = unpackedData[0]
+    version = version_IHL >> 4                  # version of the IP
+    IHL = version_IHL & 0xF                     # internet header length
+    TOS = unpackedData[1]                       # type of service
+    totalLength = unpackedData[2]
+    ID = unpackedData[3]                        # identification
+    flags = unpackedData[4]
+    fragmentOffset = unpackedData[4] & 0x1FFF
+    TTL = unpackedData[5]                       # time to live
+    protocolNr = unpackedData[6]
+    checksum = unpackedData[7]
+    sourceAddress = inet_ntoa(unpackedData[8])
+    destinationAddress = inet_ntoa(unpackedData[9])
+
+    unpackedData = struct.unpack('!BBHHHBBH4s4s' , data[:20])
+
     headerInfo = dict() #stores all of the packet header info
 
     headerInfo["version_IHL"] = unpackedData[0]
@@ -131,11 +147,12 @@ while 1:
     headerInfo["checksum"] = unpackedData[7]
     headerInfo["sourceAddress"] = inet_ntoa(unpackedData[8])
     headerInfo["destinationAddress"] = inet_ntoa(unpackedData[9])
+    headerInfo["data"] = data[20:]
 
 
-    fp.write(json.dumps(headerInfo, ensure_ascii=False)
+    fp.write(json.dumps(headerInfo, ensure_ascii=False))
 
-    
+
     #fp.write("{")
     #fp.write('"id":"' + str(count) + '","0":"' + str(count) + '",')
     #fp.write('"source":"' + sourceAddress + '","1":"' + sourceAddress + '",')
@@ -144,7 +161,7 @@ while 1:
     #fp.write('"length":"' + str(totalLength) + '","4":"' + str(totalLength) + '",')
     #fp.write('"data":"' + 'How to parse non-unicode characters?' + '","5":"' + 'How to parse non-unicode characters?' + '"')
     #fp.write("}")
-   
+
 
 
     #fp.write("%i\n" % (unpackedData[2]))
