@@ -95,11 +95,11 @@
                     <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
                         <template>
                             <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
-                                <div flex> {{model.id}} </div>
+                                <div flex> {{model.packetNumber}} </div>
                                 <div flex> {{model.sourceAddress}} </div>
                                 <div flex> {{model.destinationAddress}} </div>
                                 <div flex> {{model.protocol}} </div>
-                                <div flex> {{model.length}} </div>
+                                <div flex> {{model.totalLength}} </div>
                             </div>
                         </template>
                     </core-list>
