@@ -162,7 +162,7 @@ while 1:
         break
     else:
         fp.write(",")
-    packetCount += 1
+    count += 1
 
 # disabled promiscuous mode
 s.ioctl(SIO_RCVALL, RCVALL_OFF)
