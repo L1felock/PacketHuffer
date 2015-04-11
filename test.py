@@ -85,6 +85,8 @@ HOST = gethostbyname(gethostname())
 s = socket(AF_INET, SOCK_RAW, IPPROTO_IP)
 s.bind((HOST, 3000))
 
+
+
 # Include IP headers
 s.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
 s.ioctl(SIO_RCVALL, RCVALL_ON)
@@ -127,5 +129,7 @@ print "Checksum:\t\t" + str(checksum)
 print "Source:\t\t\t" + sourceAddress
 print "Destination:\t\t" + destinationAddress
 print "Payload:\n" + data[20:]
+#s.getsockname()[0] gives you your own ip address
 # disabled promiscuous mode
 s.ioctl(SIO_RCVALL, RCVALL_OFF)
+
