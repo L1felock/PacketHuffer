@@ -77,6 +77,11 @@
                     </div>
                 </div>
                 <div class="data">
+		    <div horizontal layout>
+  			<div>Alpha</div>
+  			<div flex>Beta (flex)</div>
+  			<div>Gamma</div>
+		    </div>
                     <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
                         <template>
                             <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
