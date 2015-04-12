@@ -95,10 +95,7 @@ s.bind((HOST, 3001))
 
 fp = open("log.json", "w")
 
-fpread = open("cgi-bin\\controller.txt", "r")
-stopValue = fpread.read()
-fpread.close()
-count = 0
+
 
 fp.write("[")
 
@@ -115,6 +112,8 @@ while 1:
     # s - string
     unpackedData = struct.unpack('!BBHHHBBH4s4s' , data[:20])
 
+    print unpackedData
+
     version_IHL = unpackedData[0]
     version = version_IHL >> 4                  # version of the IP
     IHL = version_IHL & 0xF                     # internet header length
@@ -128,15 +127,16 @@ while 1:
     checksum = unpackedData[7]
     sourceAddress = inet_ntoa(unpackedData[8])
     destinationAddress = inet_ntoa(unpackedData[9])
-
-    fp.write("{")
-    fp.write('"id":"' + str(count) + '","0":"' + str(count) + '",')
-    fp.write('"source":"' + sourceAddress + '","1":"' + sourceAddress + '",')
-    fp.write('"destination":"' + destinationAddress + '","2":"' + destinationAddress + '",')
-    fp.write('"protocol":"' + getProtocol(protocolNr) + '","3":"' + getProtocol(protocolNr) + '",')
-    fp.write('"length":"' + str(totalLength) + '","4":"' + str(totalLength) + '",')
-    fp.write('"data":"' + 'How to parse non-unicode characters?' + '","5":"' + 'How to parse non-unicode characters?' + '"')
-    fp.write("}")
+    
+    
+    print('"id":"' + '","0":"')
+    print('"source":"' + sourceAddress + '","1":"' + sourceAddress + '",')
+    print('"destination":"' + destinationAddress + '","2":"' + destinationAddress + '",')
+    print('"protocol":"' + getProtocol(protocolNr) + '","3":"' + getProtocol(protocolNr) + '",')
+    print('"length":"' + str(totalLength) + '","4":"' + str(totalLength) + '",')
+    print('"data":"' + 'How to parse non-unicode characters?' + '","5":"' + 'How to parse non-unicode characters?' + '"')
+    print("}")
+    exit
 
 
 
@@ -152,20 +152,10 @@ while 1:
 
     #fp.write(data[20:])
 
-    fpread = open("cgi-bin\\controller.txt", "r")
-    stopValue = fpread.read()
-    fpread.close()
-    if stopValue == 'stop':
-        print "STOPPED"
-        break
-    else:
-        fp.write(",")
-    count += 1
+    
+
 
 # disabled promiscuous mode
 s.ioctl(SIO_RCVALL, RCVALL_OFF)
 
-fp.write("]")
 
-fpread.close()
-fp.close()
