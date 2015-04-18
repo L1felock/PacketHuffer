@@ -17,6 +17,10 @@
     <link rel="import" href="bower_components/core-ajax/core-ajax.html">
     <link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
     <link rel="import" href="bower_components/core-list/core-list.html">
+    <link rel="import" href="bower_components/paper-input/paper-input-decorator.html">
+    <link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
+    <link rel="import" href="bower_components/paper-tabs/paper-tab.html">
+    <link rel="import" href="bower_components/core-pages/core-pages.html">
 
     <style>
         html,
@@ -41,7 +45,7 @@
                 }
                 
                 core-list {
-                    height: 250px;
+                    height: 30vh;
                 }
                 
                 .row {
@@ -58,75 +62,147 @@
                     background: silver;
                 }
                 
-                .wrapper-top,
-                .wrapper-bottom {
-                    padding: 20px;
-                }
                 
-                .wrapper-bottom {
-                    font-size: 20px;
-                }
                 .table-heading {
                     font-weight: bold;
+                }
+                
+                paper-tabs paper-tab::shadow #ink {
+                    color: #407bff;
+                }
+                
+                paper-tabs::shadow #selectionBar {
+                    background-color: #407bff;
+                }
+                
+                .section {
+                    padding: 30px;
+                }
+                .data-heading {
+                    color: #666;
+                    font-weight: bold;
+                }
+                .data-item {
+                    padding-left: 40px;
+                }
+                .data {
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                    background: rgba(0,0,0,0.1);
+                    padding: 10px;
+                    border-radius: 3px;
+                }
+                .data-segment {
+                    margin-bottom: 10px;
                 }
             </style>
 
             <div class="wrapper">
+
+                <paper-tabs selected="{{selected}}">
+                    <paper-tab>Capture Packets</paper-tab>
+                    <paper-tab>Throughput</paper-tab>
+                </paper-tabs>
+
                 <div horizontal layout center class="wrapper-top">
-                    <div>
-                        <paper-button on-tap="{{startPH}}">
-                            <paper-spinner active="{{loading}}"></paper-spinner>
-                            Start</paper-button>
-                    </div>
-                    <div>
-                        <paper-button on-tap="{{stopPH}}">Stop</paper-button>
-                    </div>
-                </div>
-<<<<<<< HEAD
-                <core-field id="filter">
-                    <core-icon icon="menu"></core-icon>
-                    <label>Filter:</label>
-                    <input placeholder="Filter" value="{{filterStr}}" flex>
-                </core-field>
-=======
-		<!--
-		<core-field id="filter">
-  			<core-icon icon="menu"></core-icon>
-  			<label>Filter:</label>
-  			<input placeholder="Filter" flex>
-		</core-field>
-		-->
->>>>>>> origin/Dineth
-                <div class="data">
-                    <div class="row table-heading" horizontal layout>
-                        <div flex># </div>
-                        <div flex>Source </div>
-                        <div flex>Destination </div>
-                        <div flex>Protocol </div>
-                        <div flex>Length </div>
-                    </div>
-                    <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
-                        <template>
-                            <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
-                                <div flex> {{model.packetNumber}} </div>
-                                <div flex> {{model.sourceAddress}} </div>
-                                <div flex> {{model.destinationAddress}} </div>
-<<<<<<< HEAD
-                                <div flex> {{model.protocolNr}} </div>
-=======
-                                <div flex> {{model.protocol}} </div>
->>>>>>> origin/Dineth
-                                <div flex> {{model.totalLength}} </div>
+
+
+                    <core-pages selected="{{selected}}" flex>
+                        <div class="section">
+                            <div layout horizontal flex>
+                                <div>
+                                    <paper-button on-tap="{{startPH}}">Start</paper-button>
+                                </div>
+                                <div>
+                                    <paper-button on-tap="{{stopPH}}">Stop</paper-button>
+                                </div>
+                                <div>
+                                    <paper-spinner active="{{loading}}"></paper-spinner>
+                                </div>
+                                <div flex></div>
+                                <div>
+                                    <paper-input-decorator label="Filter:" floatingLabel>
+                                        <input is="core-input">
+                                    </paper-input-decorator>
+                                </div>
                             </div>
-                        </template>
-                    </core-list>
+                            <div>
+                                <div class="row table-heading" flex horizontal layout>
+                                    <div flex>#</div>
+                                    <div flex>Source</div>
+                                    <div flex>Destination</div>
+                                    <div flex>Total Size of Data </div>
+                                    <div flex>Time-to-Live</div>
+
+                                    <div flex>Protocol </div>
+
+                                </div>
+                                <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
+                                    <template>
+                                        <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
+                                            <div flex> {{model.packetNumber}} </div>
+                                            <div flex> {{model.sourceAddress}} </div>
+                                            <div flex> {{model.destinationAddress}} </div>
+                                            <div flex> {{model.totalLength}} </div>
+                                            <div flex> {{model.TTL}} </div>
+                                            <div flex> {{model.protocol}} </div>
+
+                                        </div>
+                                    </template>
+                                </core-list>
+
+                                <div class="data" hidden?="{{!selection}}">
+                                    <div class="data-segment">
+                                        <div class="data-heading">Source Port</div>
+                                        <div class="data-item"></div>
+                                    </div>
+                                    <div class="data-segment">
+                                        <div class="data-heading">Destination Port</div>
+                                        <div class="data-item"></div>
+                                    </div>
+                                    <div class="data-segment">
+                                        <div class="data-heading">Sequence No</div>
+                                        <div class="data-item"></div>
+                                    </div>
+                                    <div class="data-segment">
+                                        <div class="data-heading">Acknowledge No</div>
+                                        <div class="data-item"></div>
+                                    </div>
+                                    <div class="data-segment">
+                                        <div class="data-heading">Window Size</div>
+                                        <div class="data-item"></div>
+                                    </div>
+                                    <div class="data-segment">
+                                        <div class="data-heading">MAC Address</div>
+                                        <div class="data-item"></div>
+                                    </div>
+                                    <div class="data-segment">
+                                        <div class="data-heading">Data</div>
+                                        <div class="data-item">{{selectedItem.data}}</div>
+                                    </div>
+
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div>Page 2</div>
+                    </core-pages>
+
                 </div>
+
+
+
+
             </div>
 
 
-            <div class="wrapper-bottom">
-                {{selectedItem.data}}
-            </div>
 
             <core-ajax loading="{{loading}}" progress={{progress}} id="startPH" auto="false" method="GET" contentType="application/json" url="cgi-bin/app.py" response="{{response}}" on-core-response="{{infoloaded}}" handleAs="json">
             </core-ajax>
@@ -141,6 +217,9 @@
 
         <script>
             Polymer({
+                created: function () {
+                    this.selected = 0;
+                },
                 ready: function () {
                     this.status = "start";
                     this.$.controller.go();

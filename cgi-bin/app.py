@@ -135,6 +135,7 @@ while 1:
 
     headerInfo = dict() #stores all of the packet header info
 
+    headerInfo["packetNumber"] = packetCount + 1
     headerInfo["version_IHL"] = unpackedData[0]
     headerInfo["version"] = version_IHL >> 4                  # version of the IP
     headerInfo["IHL"] = version_IHL & 0xF                     # internet header length
@@ -149,7 +150,6 @@ while 1:
     headerInfo["sourceAddress"] = inet_ntoa(unpackedData[8])
     headerInfo["destinationAddress"] = inet_ntoa(unpackedData[9])
     headerInfo["data"] = data[20:]
-    headerInfo["packetNumber"] = packetCount
 
     fp.write(json.dumps(headerInfo, ensure_ascii=False))
 
