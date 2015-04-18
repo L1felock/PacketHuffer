@@ -11,3 +11,6 @@ elif status == "start":
     fp = open("cgi-bin\\controller.txt", "w+")
     fp.write("start")
     fp.close()
+
+
+

@@ -99,10 +99,11 @@ fp = open("log.json", "w")
 fpread = open("cgi-bin\\controller.txt", "r")
 stopValue = fpread.read()
 fpread.close()
-count = 0
-
 fp.write("[")
 
+
+
+packetCount = 0
 while 1:
 
     # Include IP headers
@@ -143,38 +144,15 @@ while 1:
     headerInfo["flags"] = unpackedData[4]
     headerInfo["fragmentOffset"] = unpackedData[4] & 0x1FFF
     headerInfo["TTL"] = unpackedData[5]                       # time to live
-    headerInfo["protocolNr"] = unpackedData[6]
+    headerInfo["protocol"] = getProtocol(unpackedData[6])
     headerInfo["checksum"] = unpackedData[7]
     headerInfo["sourceAddress"] = inet_ntoa(unpackedData[8])
     headerInfo["destinationAddress"] = inet_ntoa(unpackedData[9])
     headerInfo["data"] = data[20:]
-
+    headerInfo["packetNumber"] = packetCount
 
     fp.write(json.dumps(headerInfo, ensure_ascii=False))
 
-
-    #fp.write("{")
-    #fp.write('"id":"' + str(count) + '","0":"' + str(count) + '",')
-    #fp.write('"source":"' + sourceAddress + '","1":"' + sourceAddress + '",')
-    #fp.write('"destination":"' + destinationAddress + '","2":"' + destinationAddress + '",')
-    #fp.write('"protocol":"' + getProtocol(protocolNr) + '","3":"' + getProtocol(protocolNr) + '",')
-    #fp.write('"length":"' + str(totalLength) + '","4":"' + str(totalLength) + '",')
-    #fp.write('"data":"' + 'How to parse non-unicode characters?' + '","5":"' + 'How to parse non-unicode characters?' + '"')
-    #fp.write("}")
-
-
-
-    #fp.write("%i\n" % (unpackedData[2]))
-    #fp.write(str(version) + "\n")
-    #fp.write(str(IHL*4) + "\n")
-    #fp.write(getTOS(TOS) + "\n")
-    #fp.write(str(hex(ID)) + "\n")
-    #fp.write(getFlags(flags)+ "\n")
-    #fp.write(str(fragmentOffset)+ "\n")
-    #fp.write(str(TTL)+ "\n")
-    #fp.write(str(checksum)+ "\n")
-
-    #fp.write(data[20:])
 
     fpread = open("cgi-bin\\controller.txt", "r")
     stopValue = fpread.read()
@@ -184,7 +162,7 @@ while 1:
         break
     else:
         fp.write(",")
-    count += 1
+    packetCount += 1
 
 # disabled promiscuous mode
 s.ioctl(SIO_RCVALL, RCVALL_OFF)

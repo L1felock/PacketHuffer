@@ -82,11 +82,21 @@
                         <paper-button on-tap="{{stopPH}}">Stop</paper-button>
                     </div>
                 </div>
+<<<<<<< HEAD
                 <core-field id="filter">
                     <core-icon icon="menu"></core-icon>
                     <label>Filter:</label>
                     <input placeholder="Filter" value="{{filterStr}}" flex>
                 </core-field>
+=======
+		<!--
+		<core-field id="filter">
+  			<core-icon icon="menu"></core-icon>
+  			<label>Filter:</label>
+  			<input placeholder="Filter" flex>
+		</core-field>
+		-->
+>>>>>>> origin/Dineth
                 <div class="data">
                     <div class="row table-heading" horizontal layout>
                         <div flex># </div>
@@ -98,10 +108,14 @@
                     <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
                         <template>
                             <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
-                                <div flex> {{model.id}} </div>
+                                <div flex> {{model.packetNumber}} </div>
                                 <div flex> {{model.sourceAddress}} </div>
                                 <div flex> {{model.destinationAddress}} </div>
+<<<<<<< HEAD
                                 <div flex> {{model.protocolNr}} </div>
+=======
+                                <div flex> {{model.protocol}} </div>
+>>>>>>> origin/Dineth
                                 <div flex> {{model.totalLength}} </div>
                             </div>
                         </template>
