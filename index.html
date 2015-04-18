@@ -66,6 +66,9 @@
                 .wrapper-bottom {
                     font-size: 20px;
                 }
+                .table-heading {
+                    font-weight: bold;
+                }
             </style>
 
             <div class="wrapper">
@@ -79,13 +82,13 @@
                         <paper-button on-tap="{{stopPH}}">Stop</paper-button>
                     </div>
                 </div>
-		<core-field id="filter">
-  			<core-icon icon="menu"></core-icon>
-  			<label>Filter:</label>
-  			<input placeholder="Filter" flex>
-		</core-field>
+                <core-field id="filter">
+                    <core-icon icon="menu"></core-icon>
+                    <label>Filter:</label>
+                    <input placeholder="Filter" value="{{filterStr}}" flex>
+                </core-field>
                 <div class="data">
-                    <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
+                    <div class="row table-heading" horizontal layout>
                         <div flex># </div>
                         <div flex>Source </div>
                         <div flex>Destination </div>
@@ -98,8 +101,8 @@
                                 <div flex> {{model.id}} </div>
                                 <div flex> {{model.sourceAddress}} </div>
                                 <div flex> {{model.destinationAddress}} </div>
-                                <div flex> {{model.protocol}} </div>
-                                <div flex> {{model.length}} </div>
+                                <div flex> {{model.protocolNr}} </div>
+                                <div flex> {{model.totalLength}} </div>
                             </div>
                         </template>
                     </core-list>
@@ -127,6 +130,7 @@
                 ready: function () {
                     this.status = "start";
                     this.$.controller.go();
+                    this.count = 0;
                 },
                 startPH: function () {
                     this.status = "start";
@@ -136,16 +140,16 @@
                 },
                 updateData: function () {
                     this.$.data.go();
-                    if (this.status == "start") {
-                        //this.async(this.updateData, null, 200);
-                    }
+                    location.reload();
                 },
                 stopPH: function () {
                     this.status = "stop";
                     //this.$.startPH.abort();
                     this.$.controller.go();
                     this.updateData();
-                    this.updateData();
+                },
+                loadingChanged: function () {
+                    //this.updateData();  
                 },
                 selectionChanged: function () {
                     this.selectedItem = this.$.list.selection;
