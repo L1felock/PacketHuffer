@@ -1,5 +1,10 @@
-PORT = 48321
-BUFFERSIZE
+from socket import *
+import sys
+
+
+
+PORT = 3003
+BUFFERSIZE = 1024
 
 def main():
 	s = socket(AF_INET, SOCK_STREAM)
