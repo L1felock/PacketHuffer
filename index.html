@@ -21,6 +21,10 @@
     <link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
     <link rel="import" href="bower_components/paper-tabs/paper-tab.html">
     <link rel="import" href="bower_components/core-pages/core-pages.html">
+    <link rel="import" href="bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+    <link rel="import" href="bower_components/paper-dropdown/paper-dropdown.html">
+    <link rel="import" href="bower_components/core-menu/core-menu.html">
+    <link rel="import" href="bower_components/paper-item/paper-item.html">
 
     <style>
         html,
@@ -62,7 +66,6 @@
                     background: silver;
                 }
                 
-                
                 .table-heading {
                     font-weight: bold;
                 }
@@ -78,22 +81,42 @@
                 .section {
                     padding: 30px;
                 }
+                
                 .data-heading {
                     color: #666;
                     font-weight: bold;
                 }
+                
                 .data-item {
                     padding-left: 40px;
                 }
+                
                 .data {
                     margin-top: 20px;
                     margin-bottom: 20px;
-                    background: rgba(0,0,0,0.1);
+                    background: rgba(0, 0, 0, 0.1);
                     padding: 10px;
                     border-radius: 3px;
                 }
+                
                 .data-segment {
                     margin-bottom: 10px;
+                }
+                
+                .available-circle,
+                .not-available-circle {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    margin-left: 15px;
+                }
+                
+                .available-circle {
+                    background: green;
+                }
+                
+                .not-available-circle {
+                    background: red;
                 }
             </style>
 
@@ -109,88 +132,109 @@
 
                     <core-pages selected="{{selected}}" flex>
                         <div class="section">
-                            <div layout horizontal flex>
-                                <div>
-                                    <paper-button on-tap="{{startPH}}">Start</paper-button>
-                                </div>
-                                <div>
-                                    <paper-button on-tap="{{stopPH}}">Stop</paper-button>
-                                </div>
-                                <div>
-                                    <paper-spinner active="{{loading}}"></paper-spinner>
-                                </div>
-                                <div flex></div>
-                                <div>
-                                    <paper-input-decorator label="Filter:" floatingLabel>
-                                        <input is="core-input">
-                                    </paper-input-decorator>
-                                </div>
-                            </div>
                             <div>
-                                <div class="row table-heading" flex horizontal layout>
-                                    <div flex>#</div>
-                                    <div flex>Source</div>
-                                    <div flex>Destination</div>
-                                    <div flex>Total Size of Data </div>
-                                    <div flex>Time-to-Live</div>
-
-                                    <div flex>Protocol </div>
-
-                                </div>
-                                <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
-                                    <template>
-                                        <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
-                                            <div flex> {{model.packetNumber}} </div>
-                                            <div flex> {{model.sourceAddress}} </div>
-                                            <div flex> {{model.destinationAddress}} </div>
-                                            <div flex> {{model.totalLength}} </div>
-                                            <div flex> {{model.TTL}} </div>
-                                            <div flex> {{model.protocol}} </div>
-
-                                        </div>
-                                    </template>
-                                </core-list>
-
-                                <div class="data" hidden?="{{!selection}}">
-                                    <div class="data-segment">
-                                        <div class="data-heading">Source Port</div>
-                                        <div class="data-item"></div>
-                                    </div>
-                                    <div class="data-segment">
-                                        <div class="data-heading">Destination Port</div>
-                                        <div class="data-item"></div>
-                                    </div>
-                                    <div class="data-segment">
-                                        <div class="data-heading">Sequence No</div>
-                                        <div class="data-item"></div>
-                                    </div>
-                                    <div class="data-segment">
-                                        <div class="data-heading">Acknowledge No</div>
-                                        <div class="data-item"></div>
-                                    </div>
-                                    <div class="data-segment">
-                                        <div class="data-heading">Window Size</div>
-                                        <div class="data-item"></div>
-                                    </div>
-                                    <div class="data-segment">
-                                        <div class="data-heading">MAC Address</div>
-                                        <div class="data-item"></div>
-                                    </div>
-                                    <div class="data-segment">
-                                        <div class="data-heading">Data</div>
-                                        <div class="data-item">{{selectedItem.data}}</div>
-                                    </div>
-
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                </div>
-
+                                <paper-dropdown-menu label="Choose a Network Interface" style="margin-left: 20px">
+                                    <paper-dropdown class="dropdown">
+                                        <core-menu class="menu" selected="{{selectedInterface}}">
+                                            <template repeat="{{inf in interfacesResponse}}">
+                                                <paper-item>{{inf.interface}}
+                                                    <template if="{{inf.ip}}">
+                                                        <div class="available-circle"></div>
+                                                    </template>
+                                                    <template if="{{!inf.ip}}">
+                                                        <div class="not-available-circle"></div>
+                                                    </template>
+                                                </paper-item>
+                                            </template>
+                                        </core-menu>
+                                    </paper-dropdown>
+                                </paper-dropdown-menu>
                             </div>
 
+
+                            <template if="{{interfacesResponse[selectedInterface].ip}}">
+                                <div layout horizontal flex>
+                                    <div>
+                                        <paper-button on-tap="{{startPH}}">Start</paper-button>
+                                    </div>
+                                    <div>
+                                        <paper-button on-tap="{{stopPH}}">Stop</paper-button>
+                                    </div>
+                                    <div>
+                                        <paper-spinner active="{{loading}}"></paper-spinner>
+                                    </div>
+                                    <div flex></div>
+                                    <div>
+                                        <paper-input-decorator label="Filter:" floatingLabel>
+                                            <input is="core-input">
+                                        </paper-input-decorator>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row table-heading" flex horizontal layout>
+                                        <div flex>#</div>
+                                        <div flex>Source</div>
+                                        <div flex>Destination</div>
+                                        <div flex>Total Size of Data </div>
+                                        <div flex>Time-to-Live</div>
+
+                                        <div flex>Protocol </div>
+
+                                    </div>
+                                    <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
+                                        <template>
+                                            <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
+                                                <div flex> {{model.packetNumber}} </div>
+                                                <div flex> {{model.sourceAddress}} </div>
+                                                <div flex> {{model.destinationAddress}} </div>
+                                                <div flex> {{model.totalLength}} </div>
+                                                <div flex> {{model.TTL}} </div>
+                                                <div flex> {{model.protocol}} </div>
+
+                                            </div>
+                                        </template>
+                                    </core-list>
+
+                                    <div class="data" hidden?="{{!selection}}">
+                                        <div class="data-segment">
+                                            <div class="data-heading">Source Port</div>
+                                            <div class="data-item"></div>
+                                        </div>
+                                        <div class="data-segment">
+                                            <div class="data-heading">Destination Port</div>
+                                            <div class="data-item"></div>
+                                        </div>
+                                        <div class="data-segment">
+                                            <div class="data-heading">Sequence No</div>
+                                            <div class="data-item"></div>
+                                        </div>
+                                        <div class="data-segment">
+                                            <div class="data-heading">Acknowledge No</div>
+                                            <div class="data-item"></div>
+                                        </div>
+                                        <div class="data-segment">
+                                            <div class="data-heading">Window Size</div>
+                                            <div class="data-item"></div>
+                                        </div>
+                                        <div class="data-segment">
+                                            <div class="data-heading">MAC Address</div>
+                                            <div class="data-item"></div>
+                                        </div>
+                                        <div class="data-segment">
+                                            <div class="data-heading">Data</div>
+                                            <div class="data-item">{{selectedItem.data}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template if="{{!interfacesResponse[selectedInterface].ip}}">
+                                <div horizontal layout style="margin-left: 20px;">
+                                    <div>
+                                        <h1>Please select a valid network interface</h1>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                         <div>Page 2</div>
                     </core-pages>
@@ -202,6 +246,8 @@
 
             </div>
 
+            <core-ajax auto method="GET" contentType="application/json" url="cgi-bin/network-interfaces.py" response="{{interfacesResponse}}" handleAs="json">
+            </core-ajax>
 
 
             <core-ajax loading="{{loading}}" progress={{progress}} id="startPH" auto="false" method="GET" contentType="application/json" url="cgi-bin/app.py" response="{{response}}" on-core-response="{{infoloaded}}" handleAs="json">
