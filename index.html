@@ -119,6 +119,7 @@
                 .not-available-circle {
                     background: red;
                 }
+                
                 .data {
                     height: 30vh;
                     overflow-y: scroll;
@@ -126,7 +127,7 @@
             </style>
 
             <div class="wrapper">
-
+                {{udpObjects}}
                 <paper-tabs selected="{{selected}}">
                     <paper-tab>Capture Packets</paper-tab>
                     <paper-tab>Throughput</paper-tab>
@@ -155,8 +156,8 @@
                                 </paper-dropdown-menu>
                             </div>
 
-
-                            <div hidden?="{{!interfacesResponse[selectedInterface].ip}}">
+                            <!--<div hidden?="{{!interfacesResponse[selectedInterface].ip}}">-->
+                            <div>
                                 <div layout horizontal flex>
                                     <div>
                                         <paper-button on-tap="{{startPH}}">Start</paper-button>
@@ -172,8 +173,11 @@
                                     </div>
                                     <div flex></div>
                                     <div>
-                                        <paper-input-decorator label="Filter:" floatingLabel>
-                                            <input is="core-input">
+
+                                    </div>
+                                    <div>
+                                        <paper-input-decorator label="{{allObjects.length}} Results | Filter: TCP, UDP or ICMP" floatingLabel style="width: 350px;">
+                                            <input is="core-input" value="{{filter}}" on-keyup="{{updateResponse}}">
                                         </paper-input-decorator>
                                     </div>
                                 </div>
@@ -188,7 +192,7 @@
                                         <div flex>Protocol </div>
 
                                     </div>
-                                    <core-list id="list" data="{{response3}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
+                                    <core-list id="list" data="{{allObjects}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
                                         <template>
                                             <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
                                                 <div flex> {{model.ID}} </div>
@@ -332,6 +336,8 @@
             Polymer({
                 created: function () {
                     this.selected = 0;
+                    this.udpObjects = {}
+                    this.allObjects = {}
                 },
                 ready: function () {
                     this.status = "start";
@@ -362,10 +368,52 @@
                 },
                 rereshPH: function () {
                     this.$.data.go();
+                    this.filter = "";
                 },
                 selectedInterfaceChanged: function () {
                     this.$.data.go();
+                },
+                response3Changed: function () {
+                    this.allObjects = this.response3;
+                },
+                updateResponse: function () {
+                    if (this.filter.toLowerCase() == "udp") {
+                        this.allObjects = [];
+                        for (var key in this.response3) {
+                            if (this.response3.hasOwnProperty(key)) {
+                                if (this.response3[key]['Protocol'] == "UDP") {
+                                    this.allObjects.push(this.response3[key]);
+                                }
+                            }
+                        }
+                    } else if (this.filter.toLowerCase() == "tcp") {
+                        this.allObjects = [];
+                        for (var key in this.response3) {
+                            if (this.response3.hasOwnProperty(key)) {
+                                if (this.response3[key]['Protocol'] == "TCP") {
+                                    this.allObjects.push(this.response3[key]);
+                                }
+                            }
+                        }
+                    } else if (this.filter.toLowerCase() == "icmp") {
+                        this.allObjects = [];
+                        for (var key in this.response3) {
+                            if (this.response3.hasOwnProperty(key)) {
+                                if (this.response3[key]['Protocol'] == "ICMP") {
+                                    this.allObjects.push(this.response3[key]);
+                                }
+                            }
+                        }
+                    } else if (this.filter.toLowerCase() == "") {
+                        this.allObjects = [];
+                        for (var key in this.response3) {
+                            this.allObjects.push(this.response3[key]);
+                        }
+                    } else {
+                        this.allObjects = [];
+                    }
                 }
+
             });
         </script>
 
