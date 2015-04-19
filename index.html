@@ -377,40 +377,16 @@
                     this.allObjects = this.response3;
                 },
                 updateResponse: function () {
-                    if (this.filter.toLowerCase() == "udp") {
-                        this.allObjects = [];
-                        for (var key in this.response3) {
-                            if (this.response3.hasOwnProperty(key)) {
-                                if (this.response3[key]['Protocol'] == "UDP") {
-                                    this.allObjects.push(this.response3[key]);
-                                }
+                    this.allObjects = [];
+                    for (var key in this.response3) {
+                        if (this.response3.hasOwnProperty(key)) {
+                            if (this.response3[key]['Protocol'].toLowerCase() == this.filter.toLowerCase()) {
+                                this.allObjects.push(this.response3[key]);
                             }
                         }
-                    } else if (this.filter.toLowerCase() == "tcp") {
-                        this.allObjects = [];
-                        for (var key in this.response3) {
-                            if (this.response3.hasOwnProperty(key)) {
-                                if (this.response3[key]['Protocol'] == "TCP") {
-                                    this.allObjects.push(this.response3[key]);
-                                }
-                            }
-                        }
-                    } else if (this.filter.toLowerCase() == "icmp") {
-                        this.allObjects = [];
-                        for (var key in this.response3) {
-                            if (this.response3.hasOwnProperty(key)) {
-                                if (this.response3[key]['Protocol'] == "ICMP") {
-                                    this.allObjects.push(this.response3[key]);
-                                }
-                            }
-                        }
-                    } else if (this.filter.toLowerCase() == "") {
-                        this.allObjects = [];
-                        for (var key in this.response3) {
-                            this.allObjects.push(this.response3[key]);
-                        }
-                    } else {
-                        this.allObjects = [];
+                    }
+                    if (this.filter == "") {
+                        this.allObjects = this.response3;
                     }
                 }
 
