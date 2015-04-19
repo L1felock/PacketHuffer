@@ -1,14 +1,12 @@
 import json
-
-__author__ = 'Colin'
 from socket import *
 import struct
 import sys
+import cgi, cgitb
 
+get = cgi.FieldStorage()
+interface = get.getvalue('interface')
 
-def eth_addr (a) :
-  b = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" % (ord(a[0]) , ord(a[1]) , ord(a[2]), ord(a[3]), ord(a[4]) , ord(a[5]))
-  return b
 
 fp = open("log.json", "w")
 
@@ -22,7 +20,8 @@ packetCount = 0
 
 
 while 1:
-    HOST = gethostbyname(gethostname())
+    #HOST = gethostbyname(gethostname())
+    HOST = interface
 
 
     s = socket(AF_INET, SOCK_RAW, IPPROTO_IP)

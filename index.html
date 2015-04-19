@@ -317,7 +317,7 @@
             </core-ajax>
 
 
-            <core-ajax loading="{{loading}}" progress={{progress}} id="startPH" auto="false" method="GET" contentType="application/json" url="cgi-bin/Sniffer.py" response="{{response}}" on-core-response="{{infoloaded}}" handleAs="json">
+            <core-ajax loading="{{loading}}" progress={{progress}} id="startPH" auto="false" method="GET" contentType="application/json" url="cgi-bin/Sniffer.py?interface={{interfacesResponse[selectedInterface].ip}}" response="{{response}}" on-core-response="{{infoloaded}}" handleAs="json">
             </core-ajax>
 
             <core-ajax loading="{{loading2}}" id="controller" auto="false" method="GET" contentType="application/json" url="cgi-bin/controller.py?status={{status}}" response="{{response2}}" handleAs="json">
