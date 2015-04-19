@@ -10,7 +10,7 @@
     <title>PacketHuffer</title>
     <meta name="Author" content="" />
 
-    <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
+    <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
     <link rel="import" href="bower_components/polymer/polymer.html">
     <link rel="import" href="bower_components/font-roboto/roboto.html">
     <link rel="import" href="bower_components/paper-button/paper-button.html">
@@ -25,6 +25,7 @@
     <link rel="import" href="bower_components/paper-dropdown/paper-dropdown.html">
     <link rel="import" href="bower_components/core-menu/core-menu.html">
     <link rel="import" href="bower_components/paper-item/paper-item.html">
+    <link rel="import" href="bower_components/google-chart/google-chart.html">
 
     <style>
         html,
@@ -124,6 +125,11 @@
                     height: 30vh;
                     overflow-y: scroll;
                 }
+                
+                google-chart {
+                    height: 300px;
+                    width: 400px;
+                }
             </style>
 
             <div class="wrapper">
@@ -155,8 +161,7 @@
                                 </paper-dropdown-menu>
                             </div>
 
-                            <!--<div hidden?="{{!interfacesResponse[selectedInterface].ip}}">-->
-                            <div>
+                            <div hidden?="{{!interfacesResponse[selectedInterface].ip}}">
                                 <div layout horizontal flex>
                                     <div>
                                         <paper-button on-tap="{{startPH}}">Start</paper-button>
@@ -306,7 +311,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div>Page 2</div>
+                        <div>
+
+
+                            <p>A simple <code>google-chart</code> looks like this:</p>
+
+
+
+                        </div>
                     </core-pages>
 
                 </div>
@@ -328,13 +340,21 @@
 
             <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="log.json" response="{{response3}}" handleAs="json">
             </core-ajax>
+            
+              <google-chart stylee="width: 300px; height: 400x;"
+    type='stepped-area'
+    options='{"title": "Days in a month"}'
+    cols='[{"label": "Month", "type": "string"},{"label": "Days", "type": "number"}]'
+    rows='[["Jan", 31],["Feb", 28],["Mar", 31],["Apr", 30],["May", 31],["Jun", 30]]'>
+  </google-chart>
+            
         </template>
 
 
         <script>
             Polymer({
                 created: function () {
-                    this.selected = 0;
+                    this.selected = 1;
                     this.udpObjects = {}
                     this.allObjects = {}
                 },
