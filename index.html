@@ -322,6 +322,8 @@
                                     <paper-spinner active="{{loading4}}"></paper-spinner>
                                 </div>
                             </div>
+                            
+                            Average: {{response6.averagThroughput}}
 
                             <google-chart style="height: 95vh; width: 95vw;" type='line' width="800" data="{{response5}}">
                             </google-chart>
@@ -354,7 +356,10 @@
             <core-ajax loading="{{loading4}}" id="throughputData" auto="false" method="GET" contentType="application/json" url="cgi-bin/throughputClient.py" response="{{response4}}" handleAs="json">
             </core-ajax>
             
-            <core-ajax loading="{{loading5}}" id="throughputDataResponse" auto method="GET" contentType="application/json" url="throughputOutput.json" response="{{response5}}" handleAs="json">
+            <core-ajax loading="{{loading5}}" id="throughputDataResponse" auto method="GET" contentType="application/json" url="throughputOutput.json?trick=1" response="{{response5}}" handleAs="json">
+            </core-ajax>
+            
+            <core-ajax loading="{{loading6}}" id="throughputDataResponseAverage" auto method="GET" contentType="application/json" url="throughputOutputAverage.json?trick=1" response="{{response6}}" handleAs="json">
             </core-ajax>
 
    
@@ -421,6 +426,10 @@
                 },
                 startThroughputTest: function () {
                     this.$.throughputData.go();
+                },
+                response4Changed: function () {
+                    this.$.throughputDataResponse.go();
+                    this.$.throughputDataResponseAverage.go();
                 }
 
             });

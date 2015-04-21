@@ -25,7 +25,8 @@ while 1:
 
 
     s = socket(AF_INET, SOCK_RAW, IPPROTO_IP)
-    s.bind((HOST, 3001))
+    #s.bind((HOST, 0))
+    s.bind((HOST, 0))
 
 
 
