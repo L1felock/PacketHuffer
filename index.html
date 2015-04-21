@@ -312,9 +312,18 @@
                             </div>
                         </div>
                         <div>
+<br>
+<br>
+                            <div horizontal layout center-justified>
+                                <div>
+                                    <paper-button on-tap="{{startThroughputTest}}">Start</paper-button>
+                                </div>
+                                <div>
+                                    <paper-spinner active="{{loading4}}"></paper-spinner>
+                                </div>
+                            </div>
 
-
-                            <google-chart style="height: 95vh; width: 95vw;" type='line' width="800" data="temp/throughputOutput.json">
+                            <google-chart style="height: 95vh; width: 95vw;" type='line' width="800" data="{{response5}}">
                             </google-chart>
 
 
@@ -341,9 +350,14 @@
 
             <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="log.json?trick=1" response="{{response3}}" handleAs="json">
             </core-ajax>
+            
+            <core-ajax loading="{{loading4}}" id="throughputData" auto="false" method="GET" contentType="application/json" url="cgi-bin/throughputClient.py" response="{{response4}}" handleAs="json">
+            </core-ajax>
+            
+            <core-ajax loading="{{loading5}}" id="throughputDataResponse" auto method="GET" contentType="application/json" url="throughputOutput.json" response="{{response5}}" handleAs="json">
+            </core-ajax>
 
-            <google-chart stylee="width: 300px; height: 400x;" type='stepped-area' options='{"title": "Days in a month"}' cols='[{"label": "Month", "type": "string"},{"label": "Days", "type": "number"}]' rows='[["Jan", 31],["Feb", 28],["Mar", 31],["Apr", 30],["May", 31],["Jun", 30]]'>
-            </google-chart>
+   
 
         </template>
 
@@ -404,6 +418,9 @@
                     if (this.filter == "") {
                         this.allObjects = this.response3;
                     }
+                },
+                startThroughputTest: function () {
+                    this.$.throughputData.go();
                 }
 
             });
