@@ -314,7 +314,8 @@
                         <div>
 
 
-                            <p>A simple <code>google-chart</code> looks like this:</p>
+                            <google-chart style="height: 95vh; width: 95vw;" type='line' width="800" data="temp/throughputOutput.json">
+                            </google-chart>
 
 
 
@@ -338,16 +339,12 @@
             <core-ajax loading="{{loading2}}" id="controller" auto="false" method="GET" contentType="application/json" url="cgi-bin/controller.py?status={{status}}" response="{{response2}}" handleAs="json">
             </core-ajax>
 
-            <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="log.json" response="{{response3}}" handleAs="json">
+            <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="log.json?trick=1" response="{{response3}}" handleAs="json">
             </core-ajax>
-            
-              <google-chart stylee="width: 300px; height: 400x;"
-    type='stepped-area'
-    options='{"title": "Days in a month"}'
-    cols='[{"label": "Month", "type": "string"},{"label": "Days", "type": "number"}]'
-    rows='[["Jan", 31],["Feb", 28],["Mar", 31],["Apr", 30],["May", 31],["Jun", 30]]'>
-  </google-chart>
-            
+
+            <google-chart stylee="width: 300px; height: 400x;" type='stepped-area' options='{"title": "Days in a month"}' cols='[{"label": "Month", "type": "string"},{"label": "Days", "type": "number"}]' rows='[["Jan", 31],["Feb", 28],["Mar", 31],["Apr", 30],["May", 31],["Jun", 30]]'>
+            </google-chart>
+
         </template>
 
 
