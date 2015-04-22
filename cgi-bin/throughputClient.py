@@ -37,6 +37,10 @@ def throughput():
     outfile = open("cgi-bin\\throughputOutput.txt", "w")
     throughputDict = dict()
     i = 1
+	
+	congestionDict = dict()
+	congestionDict["cols"] = [{"id":"task","type":"string"}{"id":"wndsize", "label":"window size", "type":"number"}]
+	congestionDict["position"] = {"position":"none"}
     throughputDict["cols"] = [{"id":"task","type":"string"},{"id":"throughput","label":"throughput (Mbps)","type":"number"}]
     throughputDict["legend"] = {"position":"none"}
     throughputDict["rows"] = list()
@@ -44,6 +48,7 @@ def throughput():
     for t in RTTList:  # GUI needs json... which uses dictionaries
          if t > 0:
             throughputDict["rows"].append({"c":[{"v":i},{"v":((BUFFERSIZE*.0001)/t)}]}) # (BUFFERSIZE * .0001) / t  #gives mb/s
+			congestionDict["rows"].append({"c":[{"v":}{"v":}]}) #LINE IS NOT FINISHED
             i = i + 1
 
     info = dict()
