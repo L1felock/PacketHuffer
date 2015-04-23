@@ -16,7 +16,7 @@ fpread.close()
 fp.write("[")
 
 
-packetCount = 0
+packetCount = 1
 
 
 while 1:
@@ -41,7 +41,7 @@ while 1:
     except:
         print "An error happened: "#
         sys.exc_info() #
-    data = data[0] #probably indicates there are a bunch more packets to get data from
+    data = data[0]
 
 
     #IP Header

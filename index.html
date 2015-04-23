@@ -130,6 +130,11 @@
                     height: 300px;
                     width: 400px;
                 }
+                
+                .list-wrapper {
+                    height: 25vh;
+                    overflow-y: scroll;
+                }
             </style>
 
             <div class="wrapper">
@@ -164,16 +169,16 @@
                             <div hidden?="{{!interfacesResponse[selectedInterface].ip}}">
                                 <div layout horizontal flex>
                                     <div>
-                                        <paper-button on-tap="{{startPH}}">Start</paper-button>
+                                        <paper-button hidden?="{{loading}}" on-tap="{{startPH}}">Start</paper-button>
                                     </div>
                                     <div>
-                                        <paper-button on-tap="{{stopPH}}">Stop</paper-button>
+                                        <paper-button hidden?="{{!loading}}" on-tap="{{stopPH}}">Stop</paper-button>
                                     </div>
                                     <div>
                                         <paper-button on-tap="{{rereshPH}}">Refresh</paper-button>
                                     </div>
                                     <div>
-                                        <paper-spinner active="{{loading}}"></paper-spinner>
+                                        <paper-button on-tap="{{clearPH}}">Clear</paper-button>
                                     </div>
                                     <div flex></div>
                                     <div>
@@ -196,9 +201,11 @@
                                         <div flex>Protocol </div>
 
                                     </div>
-                                    <core-list id="list" data="{{allObjects}}" height="80" flex selectionEnabled="true" selection="{{selection}}">
-                                        <template>
-                                            <div class="row  {{ {selected: selected} | tokenList }}" horizontal layout>
+
+                                    <!--<core-list id="list" data="{{allObjects}}" height="80" flex selectionEnabled="true" selection="{{selection}}">-->
+                                    <div class="list-wrapper">
+                                        <template repeat="{{model in allObjects}}" if="{{!loading}}">
+                                            <div class="row  {{ {selected: selectedItem.ID==model.ID} | tokenList }}" horizontal layout on-tap="{{selectedItemUpdate}}">
                                                 <div flex> {{model.ID}} </div>
                                                 <div flex> {{model.SourceIP}} </div>
                                                 <div flex> {{model.DestinationIP}} </div>
@@ -208,7 +215,13 @@
 
                                             </div>
                                         </template>
-                                    </core-list>
+                                        <div horizontal layout center-justified>
+                                            <div style="padding-top: 30px;">
+                                                <paper-spinner active="{{loading}}"></paper-spinner>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--</core-list>-->
 
                                     <div class="data" hidden?="{{!selection}}">
                                         <div class="data-segment">
@@ -312,8 +325,8 @@
                             </div>
                         </div>
                         <div>
-<br>
-<br>
+                            <br>
+                            <br>
                             <div horizontal layout center-justified>
                                 <div>
                                     <paper-button on-tap="{{startThroughputTest}}">Start</paper-button>
@@ -322,10 +335,10 @@
                                     <paper-spinner active="{{loading4}}"></paper-spinner>
                                 </div>
                             </div>
-                            
+
                             Average: {{response6.averagThroughput}}
 
-                            <google-chart style="height: 95vh; width: 95vw;" type='line' width="800" data="{{response5}}">
+                            <google-chart style="height: 80vh; width: 95vw;" type='line' width="800" data="{{response5}}">
                             </google-chart>
 
 
@@ -340,6 +353,7 @@
 
             </div>
 
+
             <core-ajax auto method="GET" contentType="application/json" url="cgi-bin/network-interfaces.py" response="{{interfacesResponse}}" handleAs="json">
             </core-ajax>
 
@@ -350,19 +364,19 @@
             <core-ajax loading="{{loading2}}" id="controller" auto="false" method="GET" contentType="application/json" url="cgi-bin/controller.py?status={{status}}" response="{{response2}}" handleAs="json">
             </core-ajax>
 
-            <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="log.json?trick=1" response="{{response3}}" handleAs="json">
+            <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="log.json?trick={{jsonTrickster}}" response="{{response3}}" handleAs="json">
             </core-ajax>
-            
+
             <core-ajax loading="{{loading4}}" id="throughputData" auto="false" method="GET" contentType="application/json" url="cgi-bin/throughputClient.py" response="{{response4}}" handleAs="json">
             </core-ajax>
-            
+
             <core-ajax loading="{{loading5}}" id="throughputDataResponse" auto method="GET" contentType="application/json" url="throughputOutput.json?trick=1" response="{{response5}}" handleAs="json">
             </core-ajax>
-            
+
             <core-ajax loading="{{loading6}}" id="throughputDataResponseAverage" auto method="GET" contentType="application/json" url="throughputOutputAverage.json?trick=1" response="{{response6}}" handleAs="json">
             </core-ajax>
 
-   
+
 
         </template>
 
@@ -370,38 +384,56 @@
         <script>
             Polymer({
                 created: function () {
-                    this.selected = 1;
-                    this.udpObjects = {}
-                    this.allObjects = {}
+                    this.selected = 0;
+                    this.udpObjects = {};
+                    this.allObjects = {};
+                    this.jsonTrickster = 0;
+                    this.status = "clear";
                 },
                 ready: function () {
-                    this.status = "start";
+                    //this.status = "start";
                     this.$.controller.go();
                     this.count = 0;
                 },
+                clearPH: function () {
+                    this.status = "clear";
+                    this.$.controller.go();
+                },
                 startPH: function () {
+                    this.selectedItem = {};
                     this.status = "start";
                     this.$.controller.go();
                     this.$.startPH.go();
+                    this.jsonTrickster += 1;
                     //this.updateData();
                 },
                 updateData: function () {
                     this.$.data.go();
+                    this.jsonTrickster += 1;
                     //location.reload();
                 },
                 stopPH: function () {
+                    this.jsonTrickster += 1;
                     this.status = "stop";
                     //this.$.startPH.abort();
                     this.$.controller.go();
                     this.updateData();
                 },
+                response2Changed: function () {
+                    this.jsonTrickster += 1;
+                    this.updateData();
+                },
                 loadingChanged: function () {
-                    //this.updateData();  
+                    this.rereshPH();
+                    if (this.loading) {
+                        //this.async(this.loadingChanged, null, 500);
+                    }
                 },
                 selectionChanged: function () {
                     this.selectedItem = this.$.list.selection;
                 },
                 rereshPH: function () {
+                    this.jsonTrickster += 1;
                     this.$.data.go();
                     this.filter = "";
                 },
@@ -430,6 +462,10 @@
                 response4Changed: function () {
                     this.$.throughputDataResponse.go();
                     this.$.throughputDataResponseAverage.go();
+                },
+                selectedItemUpdate: function (e) {
+                    this.selection = true;
+                    this.selectedItem = e.target.templateInstance.model.model;
                 }
 
             });
