@@ -9,6 +9,12 @@ interface = get.getvalue('interface')
 
 
 fp = open("log.json", "w")
+congestionFP = open("congestionWindow.json", "w")
+congestionWindowDict = dict()
+congestionWindowDict["cols"] = [{"id":"task","type":"string"},{"id":"congestionwindow","label":"Congestion Window","type":"number"}]
+congestionWindowDict["legend"] = {"position":"none"}
+congestionWindowDict["rows"] = list()
+
 
 fpread = open("cgi-bin\\controller.txt", "r")
 stopValue = fpread.read()
@@ -88,6 +94,9 @@ while 1:
         sniffedData["WindowSize"] = str(FooterData[5])
         sniffedData["Payload"] = data[40:]
 
+        # Congestion window stuff
+        congestionWindowDict["rows"].append({"c":[{"v":packetCount},{"v": str(FooterData[5])}]})
+
     elif HeaderData[5] == 17:
         #print "Protocol: UDP"
         sniffedData["Protocol"] = "UDP"
@@ -126,8 +135,9 @@ while 1:
         fp.write(",")
     packetCount += 1
 
+congestionFP.write(json.dumps(congestionWindowDict, ensure_ascii=False))
 
 fp.write("]")
-
+congestionFP.close()
 fpread.close()
 fp.close()

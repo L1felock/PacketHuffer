@@ -223,126 +223,136 @@
                                     </div>
                                     <!--</core-list>-->
 
-                                    <div class="data" hidden?="{{!selection}}">
-                                        <div class="data-segment">
-                                            <div class="data-heading">IP Version</div>
-                                            <div class="data-item">{{selectedItem.IPVersion}}</div>
-                                        </div>
-                                        <div class="data-segment">
-                                            <div class="data-heading">Total Length</div>
-                                            <div class="data-item">{{selectedItem.TotalLength}}</div>
-                                        </div>
-                                        <div class="data-segment">
-                                            <div class="data-heading">TTL</div>
-                                            <div class="data-item">{{selectedItem.TTL}}</div>
-                                        </div>
-                                        <div class="data-segment">
-                                            <div class="data-heading">Source IP</div>
-                                            <div class="data-item">{{selectedItem.SourceIP}}</div>
-                                        </div>
-                                        <div class="data-segment">
-                                            <div class="data-heading">Destination IP</div>
-                                            <div class="data-item">{{selectedItem.DestinationIP}}</div>
-                                        </div>
+                                    <div horizontal layout>
+                                        <div class="data" hidden?="{{!selection}}" flex>
+                                            <div class="data-segment">
+                                                <div class="data-heading">IP Version</div>
+                                                <div class="data-item">{{selectedItem.IPVersion}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Total Length</div>
+                                                <div class="data-item">{{selectedItem.TotalLength}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">TTL</div>
+                                                <div class="data-item">{{selectedItem.TTL}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Source IP</div>
+                                                <div class="data-item">{{selectedItem.SourceIP}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Destination IP</div>
+                                                <div class="data-item">{{selectedItem.DestinationIP}}</div>
+                                            </div>
 
-                                        <!-- TCP -->
-                                        <div hidden?="{{selectedItem.Protocol != 'TCP'}}">
-                                            <h3>TCP</h3>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Source Port</div>
-                                                <div class="data-item">{{selectedItem.SourcePort}}</div>
+                                            <!-- TCP -->
+                                            <div hidden?="{{selectedItem.Protocol != 'TCP'}}">
+                                                <h3>TCP</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Source Port</div>
+                                                    <div class="data-item">{{selectedItem.SourcePort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Destination Port</div>
+                                                    <div class="data-item">{{selectedItem.DestinationPort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Sequence No</div>
+                                                    <div class="data-item">{{selectedItem.SequenceNumber}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Acknowledge No</div>
+                                                    <div class="data-item">{{selectedItem.AcknowledgeNumber}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Window Size</div>
+                                                    <div class="data-item">{{selectedItem.WindowSize}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
                                             </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Destination Port</div>
-                                                <div class="data-item">{{selectedItem.DestinationPort}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Sequence No</div>
-                                                <div class="data-item">{{selectedItem.SequenceNumber}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Acknowledge No</div>
-                                                <div class="data-item">{{selectedItem.AcknowledgeNumber}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Window Size</div>
-                                                <div class="data-item">{{selectedItem.WindowSize}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Payload</div>
-                                                <div class="data-item">{{selectedItem.Payload}}</div>
-                                            </div>
-                                        </div>
 
-                                        <!-- HTTP -->
-                                        <div hidden?="{{selectedItem.Protocol != 'HTTP'}}">
-                                            <h3>HTTP</h3>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Source Port</div>
-                                                <div class="data-item">{{selectedItem.SourcePort}}</div>
+                                            <!-- HTTP -->
+                                            <div hidden?="{{selectedItem.Protocol != 'HTTP'}}">
+                                                <h3>HTTP</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Source Port</div>
+                                                    <div class="data-item">{{selectedItem.SourcePort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Destination Port</div>
+                                                    <div class="data-item">{{selectedItem.DestinationPort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Sequence No</div>
+                                                    <div class="data-item">{{selectedItem.SequenceNumber}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Acknowledge No</div>
+                                                    <div class="data-item">{{selectedItem.AcknowledgeNumber}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Window Size</div>
+                                                    <div class="data-item">{{selectedItem.WindowSize}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
                                             </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Destination Port</div>
-                                                <div class="data-item">{{selectedItem.DestinationPort}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Sequence No</div>
-                                                <div class="data-item">{{selectedItem.SequenceNumber}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Acknowledge No</div>
-                                                <div class="data-item">{{selectedItem.AcknowledgeNumber}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Window Size</div>
-                                                <div class="data-item">{{selectedItem.WindowSize}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Payload</div>
-                                                <div class="data-item">{{selectedItem.Payload}}</div>
-                                            </div>
-                                        </div>
-
-
-                                        <!-- UDP -->
-                                        <div hidden?="{{selectedItem.Protocol != 'UDP'}}">
-                                            <h3>UDP</h3>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Source Port</div>
-                                                <div class="data-item">{{selectedItem.SourcePort}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Destination Port</div>
-                                                <div class="data-item">{{selectedItem.DestinationPort}}</div>
-                                            </div>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Payload</div>
-                                                <div class="data-item">{{selectedItem.Payload}}</div>
-                                            </div>
-                                        </div>
 
 
-                                        <!-- ICMP -->
-                                        <div hidden?="{{selectedItem.Protocol != 'ICMP'}}">
-                                            <h3>ICMP</h3>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Payload</div>
-                                                <div class="data-item">{{selectedItem.Payload}}</div>
+                                            <!-- UDP -->
+                                            <div hidden?="{{selectedItem.Protocol != 'UDP'}}">
+                                                <h3>UDP</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Source Port</div>
+                                                    <div class="data-item">{{selectedItem.SourcePort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Destination Port</div>
+                                                    <div class="data-item">{{selectedItem.DestinationPort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
+                                            </div>
+
+
+                                            <!-- ICMP -->
+                                            <div hidden?="{{selectedItem.Protocol != 'ICMP'}}">
+                                                <h3>ICMP</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <!-- MISC -->
+                                            <div hidden?="{{selectedItem.Protocol != 'ICMP' || selectedItem.Protocol != 'TCP' || selectedItem.Protocol != 'UDP'}}">
+                                                <h3>MISC Protocol</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
                                             </div>
                                         </div>
 
-
-
-                                        <!-- MISC -->
-                                        <div hidden?="{{selectedItem.Protocol != 'ICMP' || selectedItem.Protocol != 'TCP' || selectedItem.Protocol != 'UDP'}}">
-                                            <h3>MISC Protocol</h3>
-                                            <div class="data-segment">
-                                                <div class="data-heading">Payload</div>
-                                                <div class="data-item">{{selectedItem.Payload}}</div>
-                                            </div>
-                                        </div>
                                     </div>
+
                                 </div>
+                            </div>
+
+                            <div flex hidden?="{{status == 'clear' || loading}}">
+                                <h2>Congestion Window</h2>
+                                <google-chart style="height: 60vh; width: 90vw;" type='line' width="800" data="{{response7}}">
+                                </google-chart>
                             </div>
 
                             <div hidden?="{{interfacesResponse[selectedInterface].ip}}">
@@ -408,6 +418,9 @@
 
             <core-ajax loading="{{loading6}}" id="throughputDataResponseAverage" auto method="GET" contentType="application/json" url="throughputOutputAverage.json?trick={{jsonTrickster}}" response="{{response6}}" handleAs="json">
             </core-ajax>
+            
+            <core-ajax loading="{{loading7}}" id="congestionWindowResponse" auto method="GET" contentType="application/json" url="congestionWindow.json?trick={{jsonTrickster}}" response="{{response7}}" handleAs="json">
+            </core-ajax>
 
 
 
@@ -417,7 +430,7 @@
         <script>
             Polymer({
                 created: function () {
-                    this.selected = 1;
+                    this.selected = 0;
                     this.udpObjects = {};
                     this.allObjects = {};
                     this.jsonTrickster = 0;
@@ -442,6 +455,7 @@
                 },
                 updateData: function () {
                     this.$.data.go();
+                    this.$.congestionWindowResponse.go();
                     this.jsonTrickster += 1;
                     //location.reload();
                 },
@@ -468,10 +482,12 @@
                 rereshPH: function () {
                     this.jsonTrickster += 1;
                     this.$.data.go();
+                    this.$.congestionWindowResponse.go();
                     this.filter = "";
                 },
                 selectedInterfaceChanged: function () {
                     this.$.data.go();
+                    this.$.congestionWindowResponse.go();
                 },
                 response3Changed: function () {
                     this.allObjects = this.response3;
