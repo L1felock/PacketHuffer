@@ -368,14 +368,14 @@
                             <br>
                             <div horizontal layout center-justified>
                                 <div>
-                                    <paper-button on-tap="{{startThroughputTest}}">Start</paper-button>
+                                    <paper-button on-tap="{{startThroughputTest}}">Test</paper-button>
                                 </div>
                                 <div>
                                     <paper-spinner active="{{loading4}}"></paper-spinner>
                                 </div>
                             </div>
 
-                            <div horizontal layout center-justified>
+                            <div horizontal layout center-justified hidden?="{{response4 == null}}">
                                 <div>
                                     <h2>Instantaneous Throughput</h2>
                                     <google-chart style="height: 60vh; width: 75vw;" type='line' width="800" data="{{response5}}">
@@ -430,7 +430,7 @@
         <script>
             Polymer({
                 created: function () {
-                    this.selected = 0;
+                    this.selected = 1;
                     this.udpObjects = {};
                     this.allObjects = {};
                     this.jsonTrickster = 0;
