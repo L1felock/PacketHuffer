@@ -273,7 +273,7 @@
                                                 <div class="data-item">{{selectedItem.Payload}}</div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- HTTP -->
                                         <div hidden?="{{selectedItem.Protocol != 'HTTP'}}">
                                             <h3>HTTP</h3>
@@ -365,11 +365,15 @@
                                 </div>
                             </div>
 
-                            Average: {{response6.averagThroughput}}
+                            <div horizontal layout center-justified>
+                                <div>
+                                    <h2>Instantaneous Throughput</h2>
+                                    <google-chart style="height: 60vh; width: 75vw;" type='line' width="800" data="{{response5}}">
+                                    </google-chart>
 
-                            <google-chart style="height: 80vh; width: 95vw;" type='line' width="800" data="{{response5}}">
-                            </google-chart>
-
+                                    <h2>Average Throughput: {{response6.averagThroughput}} Mbps</h2>
+                                </div>
+                            </div>
 
 
                         </div>
@@ -399,10 +403,10 @@
             <core-ajax loading="{{loading4}}" id="throughputData" auto="false" method="GET" contentType="application/json" url="cgi-bin/throughputClient.py" response="{{response4}}" handleAs="json">
             </core-ajax>
 
-            <core-ajax loading="{{loading5}}" id="throughputDataResponse" auto method="GET" contentType="application/json" url="throughputOutput.json?trick=1" response="{{response5}}" handleAs="json">
+            <core-ajax loading="{{loading5}}" id="throughputDataResponse" auto method="GET" contentType="application/json" url="throughputOutput.json?trick={{jsonTrickster}}" response="{{response5}}" handleAs="json">
             </core-ajax>
 
-            <core-ajax loading="{{loading6}}" id="throughputDataResponseAverage" auto method="GET" contentType="application/json" url="throughputOutputAverage.json?trick=1" response="{{response6}}" handleAs="json">
+            <core-ajax loading="{{loading6}}" id="throughputDataResponseAverage" auto method="GET" contentType="application/json" url="throughputOutputAverage.json?trick={{jsonTrickster}}" response="{{response6}}" handleAs="json">
             </core-ajax>
 
 
@@ -413,7 +417,7 @@
         <script>
             Polymer({
                 created: function () {
-                    this.selected = 0;
+                    this.selected = 1;
                     this.udpObjects = {};
                     this.allObjects = {};
                     this.jsonTrickster = 0;
@@ -486,11 +490,19 @@
                     }
                 },
                 startThroughputTest: function () {
+                    this.jsonTrickster += 1;
                     this.$.throughputData.go();
                 },
                 response4Changed: function () {
                     this.$.throughputDataResponse.go();
                     this.$.throughputDataResponseAverage.go();
+                },
+                loading4Changed: function () {
+                    this.$.throughputDataResponseAverage.go();
+                    this.jsonTrickster += 1;
+                    if (this.loading4) {
+                        //this.async(this.loading4Changed, null, 500);
+                    }
                 },
                 selectedItemUpdate: function (e) {
                     this.selection = true;
