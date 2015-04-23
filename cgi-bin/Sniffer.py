@@ -41,7 +41,7 @@ while 1:
     except:
         print "An error happened: "#
         sys.exc_info() #
-    data = data[0]
+    data = data[0] #probably indicates there are a bunch more packets to get data from
 
 
     #IP Header
