@@ -77,6 +77,10 @@ while 1:
         #print "Acknowledge Number: " + str(FooterData[3])
         #print "Window Size: " + str(FooterData[5])
         #print "Payload" + data[40:]
+
+        # SET HTTP PROTOCOL
+        if str(FooterData[0]) == "80" or str(FooterData[1]) == "80":
+            sniffedData["Protocol"] = "HTTP"
         sniffedData["SourcePort"] = str(FooterData[0])
         sniffedData["DestinationPort"] = str(FooterData[1])
         sniffedData["SequenceNumber"] = str(FooterData[2])

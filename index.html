@@ -185,7 +185,7 @@
 
                                     </div>
                                     <div>
-                                        <paper-input-decorator label="{{allObjects.length}} Results | Filter: TCP, UDP or ICMP" floatingLabel style="width: 350px;">
+                                        <paper-input-decorator label="{{allObjects.length}} Results | Filter: HTTP, TCP, UDP or ICMP" floatingLabel style="width: 350px;">
                                             <input is="core-input" value="{{filter}}" on-keyup="{{updateResponse}}">
                                         </paper-input-decorator>
                                     </div>
@@ -248,6 +248,35 @@
                                         <!-- TCP -->
                                         <div hidden?="{{selectedItem.Protocol != 'TCP'}}">
                                             <h3>TCP</h3>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Source Port</div>
+                                                <div class="data-item">{{selectedItem.SourcePort}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Destination Port</div>
+                                                <div class="data-item">{{selectedItem.DestinationPort}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Sequence No</div>
+                                                <div class="data-item">{{selectedItem.SequenceNumber}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Acknowledge No</div>
+                                                <div class="data-item">{{selectedItem.AcknowledgeNumber}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Window Size</div>
+                                                <div class="data-item">{{selectedItem.WindowSize}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Payload</div>
+                                                <div class="data-item">{{selectedItem.Payload}}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- HTTP -->
+                                        <div hidden?="{{selectedItem.Protocol != 'HTTP'}}">
+                                            <h3>HTTP</h3>
                                             <div class="data-segment">
                                                 <div class="data-heading">Source Port</div>
                                                 <div class="data-item">{{selectedItem.SourcePort}}</div>
