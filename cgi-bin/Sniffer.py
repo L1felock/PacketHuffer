@@ -4,13 +4,6 @@ import struct
 import sys
 import cgi, cgitb
 
-
-#variables used to compute network diameter
-averageDiameter = 0
-diameterTally = 0
-diameterCount = 0
-
-
 get = cgi.FieldStorage()
 interface = get.getvalue('interface')
 
@@ -73,14 +66,6 @@ while 1:
     sniffedData["TotalLength"] =  str(TotalLength)
     #print "Time To Live: " + str(HeaderData[4])
     sniffedData["TTL"] = str(HeaderData[4])
-
-    #network diameter calculations
-    if sniffedData["TTL"] < 128:
-        diameterCount = diametercount + 1
-        diameterTally = diameterTally + sniffedData["TTL"]
-
-
-
     SourceIp = inet_ntoa(HeaderData[7])
     #print "Source IP: " + SourceIp
     sniffedData["SourceIP"] = SourceIp
@@ -145,10 +130,6 @@ while 1:
     fpread.close()
     if stopValue == 'stop':
         print "STOPPED"
-        z = open("averageDiameter.txt", "w")
-        averageDiameter = diameterTally/diameterCount
-        z.write(str(averageDiameter))
-        z.close()
         break
     else:
         fp.write(",")
