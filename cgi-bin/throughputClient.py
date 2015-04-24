@@ -55,9 +55,9 @@ def throughput():
     outfile.write(json.dumps(throughputDict))
     #outfile.write(json.dumps(info) + "\n")
     outfile.close()
-    f = open("cgi-bin\\throughputController.txt", "w")
-    f.write("stop")
-    f.close()
+    #f = open("cgi-bin\\throughputController.txt", "w")
+    #f.write("stop")
+    #f.close()
 
 
 def main():
