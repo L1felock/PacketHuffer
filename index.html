@@ -414,7 +414,7 @@
             <core-ajax loading="{{loading2}}" id="controller" auto="false" method="GET" contentType="application/json" url="cgi-bin/controller.py?status={{status}}" response="{{response2}}" handleAs="json">
             </core-ajax>
 
-            <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="log.json?trick={{jsonTrickster}}" response="{{response3}}" handleAs="json">
+            <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="data/log.json?trick={{jsonTrickster}}" response="{{response3}}" handleAs="json">
             </core-ajax>
 
             <core-ajax loading="{{loading4}}" id="throughputData" auto="false" method="GET" contentType="application/json" url="cgi-bin/throughputClient.py" response="{{response4}}" handleAs="json">
@@ -442,7 +442,7 @@
         <script>
             Polymer({
                 created: function () {
-                    this.selected = 1;
+                    this.selected = 0;
                     this.udpObjects = {};
                     this.allObjects = {};
                     this.jsonTrickster = 0;

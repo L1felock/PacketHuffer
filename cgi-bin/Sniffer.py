@@ -15,7 +15,7 @@ get = cgi.FieldStorage()
 interface = get.getvalue('interface')
 
 
-fp = open("log.json", "w")
+fp = open("data//log.json", "w")
 congestionFP = open("congestionWindow.json", "w")
 congestionWindowDict = dict()
 congestionWindowDict["cols"] = [{"id":"task","type":"string"},{"id":"congestionwindow","label":"Congestion Window","type":"number"}]
@@ -127,6 +127,12 @@ while 1:
         #print "Protocol: ICMP"
         #print "Payload: " + data[28:]
         sniffedData["Protocol"] = "ICMP"
+        sniffedData["Payload"] = data[28:]
+
+    elif HeaderData[5] == 58:
+        #print "Protocol: ICMPv6"
+        #print "Payload: " + data[28:]
+        sniffedData["Protocol"] = "ICMPv6"
         sniffedData["Payload"] = data[28:]
 
     else:
