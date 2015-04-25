@@ -16,12 +16,14 @@ interface = get.getvalue('interface')
 
 
 fp = open("data//log.json", "w")
+packetAveragesFP = open("data//packetAverages.json", "w")
 congestionFP = open("data//congestionWindow.json", "w")
 congestionWindowDict = dict()
 congestionWindowDict["cols"] = [{"id":"task","type":"string"},{"id":"congestionwindow","label":"Congestion Window","type":"number"}]
 congestionWindowDict["legend"] = {"position":"none"}
 congestionWindowDict["rows"] = list()
 
+packetAveragesDict = dict()
 
 fpread = open("cgi-bin\\controller.txt", "r")
 stopValue = fpread.read()
@@ -30,7 +32,7 @@ fp.write("[")
 
 
 packetCount = 1
-
+totalPacketLength = 0
 
 while 1:
     #HOST = gethostbyname(gethostname())
@@ -70,6 +72,8 @@ while 1:
 
     TotalLength = HeaderData[2]
     #print "Total Length: " + str(TotalLength)
+    totalPacketLength += TotalLength
+
     sniffedData["TotalLength"] =  str(TotalLength)
     #print "Time To Live: " + str(HeaderData[4])
     sniffedData["TTL"] = str(HeaderData[4])
@@ -159,9 +163,15 @@ while 1:
         fp.write(",")
     packetCount += 1
 
+
+packetAveragesDict["totalLength"] = totalPacketLength
+packetAveragesDict["numPackets"] = packetCount
+
 congestionFP.write(json.dumps(congestionWindowDict, ensure_ascii=False))
+packetAveragesFP.write(json.dumps(packetAveragesDict, ensure_ascii=False))
 
 fp.write("]")
 congestionFP.close()
 fpread.close()
 fp.close()
+packetAveragesFP.close()
