@@ -359,6 +359,11 @@
                                 <span style="font-weight: bold;">Average Packet Size Over the Captured Session: </span> {{packetAveragesResponse.totalLength/packetAveragesResponse.numPackets}}
                                 
                             </div>
+                            
+                            <div flex hidden?="{{status == 'clear' || loading}}" style="margin: 20px;">
+                                <span style="font-weight: bold;">Average Diameter of the Network: </span> {{averageDiameterResponse}}
+                                
+                            </div>
 
                             <div hidden?="{{interfacesResponse[selectedInterface].ip}}">
                                 <div horizontal layout style="margin-left: 20px;">
@@ -423,6 +428,8 @@
             </core-ajax>
             <core-ajax id="packetAverages" auto method="GET" contentType="application/json" url="data/packetAverages.json?trick={{jsonTrickster}}" response="{{packetAveragesResponse}}" handleAs="json">
             </core-ajax>
+            <core-ajax id="averageDiameter" auto method="GET" contentType="application/json" url="data/averageDiameter.json?trick={{jsonTrickster}}" response="{{averageDiameterResponse}}" handleAs="json">
+            </core-ajax>
 
             <core-ajax loading="{{loading4}}" id="throughputData" auto="false" method="GET" contentType="application/json" url="cgi-bin/throughputClient.py" response="{{response4}}" handleAs="json">
             </core-ajax>
@@ -475,6 +482,7 @@
                 updateData: function () {
                     this.$.data.go();
                     this.$.packetAverages.go();
+                    this.$.averageDiameter.go();
                     this.$.congestionWindowResponse.go();
                     this.jsonTrickster += 1;
                     //location.reload();
@@ -503,12 +511,14 @@
                     this.jsonTrickster += 1;
                     this.$.data.go();
                     this.$.packetAverages.go();
+                    this.$.averageDiameter.go();
                     this.$.congestionWindowResponse.go();
                     this.filter = "";
                 },
                 selectedInterfaceChanged: function () {
                     this.$.data.go();
                     this.$.packetAverages.go();
+                    this.$.averageDiameter.go();
                     this.$.congestionWindowResponse.go();
                 },
                 response3Changed: function () {

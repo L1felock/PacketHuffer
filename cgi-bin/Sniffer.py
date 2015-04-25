@@ -79,9 +79,9 @@ while 1:
     sniffedData["TTL"] = str(HeaderData[4])
 
     #network diameter calculations
-    if sniffedData["TTL"] < 128:
+    if int(sniffedData["TTL"]) < 128:
         diameterCount = diameterCount + 1
-        diameterTally = diameterTally + math.abs(128-HeaderData[4])
+        diameterTally = diameterTally + math.fabs(128-int(HeaderData[4]))
 
     SourceIp = inet_ntoa(HeaderData[7])
     #print "Source IP: " + SourceIp
@@ -153,7 +153,7 @@ while 1:
     fpread.close()
     if stopValue == 'stop':
         print "STOPPED"
-        z = open("averageDiameter.txt", "w")
+        z = open("data\\averageDiameter.json", "w")
         if diameterCount > 0:
             averageDiameter = diameterTally/diameterCount
             z.write(str(averageDiameter))
