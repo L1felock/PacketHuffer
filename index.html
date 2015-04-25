@@ -375,15 +375,22 @@
                                 </div>
                             </div>
 
-                            <div horizontal layout center-justified hidden?="{{response4 == null}}">
-                                <div>
-                                    <h2>Instantaneous Throughput</h2>
-                                    <google-chart style="height: 60vh; width: 75vw;" type='line' width="800" data="{{response5}}">
-                                    </google-chart>
+                            <div hidden?="{{response4 == null}}">
+                                <div horizontal layout center-justified flex>
+                                    <div>
+                                        <google-chart style="height: 60vh; width: 50vw;" type='line' width="800" data="{{response5}}">
+                                        </google-chart>
+                                    </div>
 
-                                    <h2>Average Throughput: {{response6.averagThroughput}} Mbps</h2>
+                                    <div>
+                                        <google-chart style="height: 60vh; width: 50vw;" type='line' width="800" data="{{response52}}">
+                                        </google-chart>
+
+                                    </div>
                                 </div>
+                                <h2 style="margin-left: 50px;">Average Throughput: {{response6}} Mbps</h2>
                             </div>
+
 
 
                         </div>
@@ -413,13 +420,18 @@
             <core-ajax loading="{{loading4}}" id="throughputData" auto="false" method="GET" contentType="application/json" url="cgi-bin/throughputClient.py" response="{{response4}}" handleAs="json">
             </core-ajax>
 
-            <core-ajax loading="{{loading5}}" id="throughputDataResponse" auto method="GET" contentType="application/json" url="throughputOutput.json?trick={{jsonTrickster}}" response="{{response5}}" handleAs="json">
+            <core-ajax loading="{{loading5}}" id="throughputDataResponse" auto method="GET" contentType="application/json" url="data/throughputOutput.json?trick={{jsonTrickster}}" response="{{response5}}" handleAs="json">
+            </core-ajax>
+            <core-ajax loading="{{loading52}}" id="throughputRunningAverageResponse" auto method="GET" contentType="application/json" url="data/runningAverageOutput.json?trick={{jsonTrickster}}" response="{{response52}}" handleAs="json">
             </core-ajax>
 
-            <core-ajax loading="{{loading6}}" id="throughputDataResponseAverage" auto method="GET" contentType="application/json" url="throughputOutputAverage.json?trick={{jsonTrickster}}" response="{{response6}}" handleAs="json">
+            <core-ajax loading="{{loading6}}" id="throughputDataResponseAverage" auto method="GET" contentType="application/json" url="data/throughputOutputAverage.json?trick={{jsonTrickster}}" response="{{response6}}" handleAs="json">
+            </core-ajax>
+
+            <core-ajax loading="{{loading7}}" id="congestionWindowResponse" auto method="GET" contentType="application/json" url="congestionWindow.json?trick={{jsonTrickster}}" response="{{response7}}" handleAs="json">
             </core-ajax>
             
-            <core-ajax loading="{{loading7}}" id="congestionWindowResponse" auto method="GET" contentType="application/json" url="congestionWindow.json?trick={{jsonTrickster}}" response="{{response7}}" handleAs="json">
+            <core-ajax auto method="GET" contentType="application/json" url="cgi-bin/create-files.py" handleAs="json">
             </core-ajax>
 
 
@@ -430,7 +442,7 @@
         <script>
             Polymer({
                 created: function () {
-                    this.selected = 0;
+                    this.selected = 1;
                     this.udpObjects = {};
                     this.allObjects = {};
                     this.jsonTrickster = 0;
@@ -512,9 +524,11 @@
                 response4Changed: function () {
                     this.$.throughputDataResponse.go();
                     this.$.throughputDataResponseAverage.go();
+                    this.$.throughputRunningAverageResponse.go();
                 },
                 loading4Changed: function () {
                     this.$.throughputDataResponseAverage.go();
+                    this.$.throughputRunningAverageResponse.go();
                     this.jsonTrickster += 1;
                     if (this.loading4) {
                         //this.async(this.loading4Changed, null, 500);

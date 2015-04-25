@@ -7,13 +7,32 @@ BUFFERSIZE = 1024
 COUNT = 500  # number of packets that will be sent
 HOST = "dsh-s1.info"  # this is our remote server that you will bounce packets off of
 
+def throughputTest(fileName, fileSize, iterations, s, throughputDict, runningAverage, previousFileSize, previousN, startTime, runningAverageDict):
+    n = 0
+
+    while n < iterations:
+        f = open("data//"+fileName,'rb')
+        l = f.read(1024)
+        t1 = time.time()
+        while l:
+            s.send(l)
+            l = f.read(1024)
+        t2 = time.time()
+        if t2-t1>0:
+            tempThroughput = (((fileSize)/(t2-t1)))*8/1024
+            midTime = time.time()
+            runningAverage = (((previousFileSize*previousN + fileSize*n)/(midTime-startTime)))*8/1024
+            if tempThroughput < runningAverage * 3:
+                throughputDict["rows"].append({"c":[{"v":n},{"v":tempThroughput}]})
+                runningAverageDict["rows"].append({"c":[{"v":n},{"v":runningAverage}]})
+        f.close()
+        n += 1
+    return runningAverage
 
 def throughput():
     print "capturing throughput\n"
 
-    packetData = '1' * (BUFFERSIZE - 2) + '\n'
     RTTList = list()
-    averageThroughput = 0
     s = socket(AF_INET, SOCK_STREAM)
 
     try:
@@ -21,61 +40,58 @@ def throughput():
     except Exception, e:
         print "could not connect"
 
-    totalT1 = time.time()
+    outfile = open("data//throughputOutput.json", "w")
+    runningAverageFile = open("data//runningAverageOutput.json", "w")
+    averageOut = open("data//throughputOutputAverage.json", "w")
 
-    i = 0
-    while i < COUNT:
-        t1 = time.time()
-        s.send(packetData)
-        t2 = time.time()
-        RTTList.append(t2 - t1)
-        i = i + 1
-    totalT2 = time.time()
-    averageThroughput = ((BUFFERSIZE * COUNT * .001) / (totalT2 - totalT1))*8/1024  # in mb/s
-    totalTime = totalT2 - totalT1  # in seconds
 
-    outfile = open("throughputOutput.json", "w")
-    averageOut = open("throughputOutputAverage.json", "w")
     throughputDict = dict()
-    i = 1
     throughputDict["cols"] = [{"id":"task","type":"string"},{"id":"throughput","label":"throughput (Mbps)","type":"number"}]
     throughputDict["legend"] = {"position":"none"}
     throughputDict["rows"] = list()
 
-    for t in RTTList:  # GUI needs json... which uses dictionaries
-         if t > 0:
-            throughputDict["rows"].append({"c":[{"v":i},{"v":(((BUFFERSIZE*.001)/t))*8/1024}]}) # (BUFFERSIZE * .0001) / t  #gives mb/s
-            i = i + 1
+    runningAverageDict = dict()
+    runningAverageDict["cols"] = [{"id":"task","type":"string"},{"id":"runningAverage","label":"Running Average (Mbps)","type":"number"}]
+    runningAverageDict["legend"] = {"position":"none"}
+    runningAverageDict["rows"] = list()
 
-    info = dict()
-    info["averagThroughput"] = averageThroughput
-    info["totalTime"] = totalTime
-    averageOut.write(json.dumps(info))
+    runningAverage = 0
+    startTime = time.time()
+
+    #1KB Test
+    runningAverage = throughputTest("1KB.bin", 1, 1000, s, throughputDict, 0,  0, 0, startTime, runningAverageDict)
+
+    if runningAverage > 1.5 and time.time()-startTime < 15:
+        #10KB Test
+        runningAverage = throughputTest("10KB.bin", 10, 1000, s, throughputDict, 0,  1, 1000, startTime, runningAverageDict)
+
+    if runningAverage > 2 and time.time()-startTime < 30:
+        #100KB Test
+        runningAverage = throughputTest("100KB.bin", 100, 100, s, throughputDict, 0,  10, 1000, startTime, runningAverageDict)
+
+    if runningAverage > 5 and time.time()-startTime < 90:
+        #1MB Test
+        runningAverage = throughputTest("1MB.bin", 1024, 10, s, throughputDict, 0,  100, 100, startTime, runningAverageDict)
+
+    if runningAverage > 10 and time.time()-startTime < 120:
+        #10MB Test
+        runningAverage = throughputTest("10MB.bin", 10240, 10, s, throughputDict, 0,  1024, 10, startTime, runningAverageDict)
+
+    if runningAverage > 50 and time.time()-startTime < 150:
+        #100MB Test
+        runningAverage = throughputTest("100MB.bin", 102400, 1, s, throughputDict, 0,  10240, 10, startTime, runningAverageDict)
 
     outfile.write(json.dumps(throughputDict))
-    #outfile.write(json.dumps(info) + "\n")
+    runningAverageFile.write(json.dumps(runningAverageDict))
+    averageOut.write(json.dumps(runningAverage))
     outfile.close()
-    #f = open("cgi-bin\\throughputController.txt", "w")
-    #f.write("stop")
-    #f.close()
+    averageOut.close()
+    runningAverageFile.close()
 
 
 def main():
-
-
-    """
-    while(1):
-        f = open("throughputController.txt", "r")
-        status = f.read().strip()
-        f.close()
-        if status == "start":
-            throughput()
-        else:
-            continue
-    """
-throughput()
+    throughput()
 
 if __name__ == "__main__":
     main()
-	
 
