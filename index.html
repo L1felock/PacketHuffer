@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#990000">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>PacketHuffer</title>
+    <meta name="Author" content="" />
+
+    <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+    <link rel="import" href="bower_components/polymer/polymer.html">
+    <link rel="import" href="bower_components/font-roboto/roboto.html">
+    <link rel="import" href="bower_components/paper-button/paper-button.html">
+    <link rel="import" href="bower_components/core-ajax/core-ajax.html">
+    <link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
+    <link rel="import" href="bower_components/core-list/core-list.html">
+    <link rel="import" href="bower_components/paper-input/paper-input-decorator.html">
+    <link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
+    <link rel="import" href="bower_components/paper-tabs/paper-tab.html">
+    <link rel="import" href="bower_components/core-pages/core-pages.html">
+    <link rel="import" href="bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+    <link rel="import" href="bower_components/paper-dropdown/paper-dropdown.html">
+    <link rel="import" href="bower_components/core-menu/core-menu.html">
+    <link rel="import" href="bower_components/paper-item/paper-item.html">
+    <link rel="import" href="bower_components/google-chart/google-chart.html">
+
+    <style>
+        html,
+        body {
+            font-family: 'RobotoDraft', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <polymer-element name="packet-huffer">
+        <template>
+            <style>
+                .wrapper {
+                    //padding: 20px;
+                }
+                
+                core-list {
+                    height: 30vh;
+                }
+                
+                .row {
+                    padding: 20px;
+                    border-bottom: 1px solid #ccc;
+                    cursor: pointer;
+                }
+                
+                .selection-display {
+                    background: lightgray;
+                }
+                
+                .selected {
+                    background: silver;
+                }
+                
+                .table-heading {
+                    font-weight: bold;
+                    overflow-y: scroll;
+                }
+                
+                paper-tabs paper-tab::shadow #ink {
+                    color: #407bff;
+                }
+                
+                paper-tabs::shadow #selectionBar {
+                    background-color: #407bff;
+                }
+                
+                .section {
+                    padding: 30px;
+                }
+                
+                .data-heading {
+                    color: #666;
+                    font-weight: bold;
+                }
+                
+                .data-item {
+                    padding-left: 40px;
+                }
+                
+                .data {
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                    background: rgba(0, 0, 0, 0.1);
+                    padding: 10px;
+                    border-radius: 3px;
+                }
+                
+                .data-segment {
+                    margin-bottom: 10px;
+                }
+                
+                .available-circle,
+                .not-available-circle {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    margin-left: 15px;
+                }
+                
+                .available-circle {
+                    background: green;
+                }
+                
+                .not-available-circle {
+                    background: red;
+                }
+                
+                .data {
+                    height: 30vh;
+                    overflow-y: scroll;
+                }
+                
+                google-chart {
+                    height: 300px;
+                    width: 400px;
+                }
+                
+                .list-wrapper {
+                    height: 25vh;
+                    overflow-y: scroll;
+                }
+            </style>
+
+            <div class="wrapper">
+                <paper-tabs selected="{{selected}}">
+                    <paper-tab>Capture Packets</paper-tab>
+                    <paper-tab>Throughput</paper-tab>
+                </paper-tabs>
+
+                <div horizontal layout center class="wrapper-top">
+
+                    <core-pages selected="{{selected}}" flex>
+                        <div class="section">
+                            <div>
+                                <paper-dropdown-menu label="Choose a Network Interface" style="margin-left: 20px">
+                                    <paper-dropdown class="dropdown">
+                                        <core-menu class="menu" selected="{{selectedInterface}}">
+                                            <template repeat="{{inf in interfacesResponse}}">
+                                                <paper-item>{{inf.interface}}
+                                                    <template if="{{inf.ip}}">
+                                                        <div class="available-circle"></div>
+                                                    </template>
+                                                    <template if="{{!inf.ip}}">
+                                                        <div class="not-available-circle"></div>
+                                                    </template>
+                                                </paper-item>
+                                            </template>
+                                        </core-menu>
+                                    </paper-dropdown>
+                                </paper-dropdown-menu>
+                            </div>
+
+                            <div hidden?="{{!interfacesResponse[selectedInterface].ip}}">
+                                <div layout horizontal flex>
+                                    <div>
+                                        <paper-button hidden?="{{loading}}" on-tap="{{startPH}}">Start</paper-button>
+                                    </div>
+                                    <div>
+                                        <paper-button hidden?="{{!loading}}" on-tap="{{stopPH}}">Stop</paper-button>
+                                    </div>
+                                    <div>
+                                        <paper-button on-tap="{{rereshPH}}">Refresh</paper-button>
+                                    </div>
+                                    <div>
+                                        <paper-button on-tap="{{clearPH}}">Clear</paper-button>
+                                    </div>
+                                    <div flex></div>
+                                    <div>
+
+                                    </div>
+                                    <div>
+                                        <paper-input-decorator label="{{allObjects.length}} Results | Filter: HTTP, TCP, UDP or ICMP" floatingLabel style="width: 350px;">
+                                            <input is="core-input" value="{{filter}}" on-keyup="{{updateResponse}}">
+                                        </paper-input-decorator>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row table-heading" flex horizontal layout>
+                                        <div flex>#</div>
+                                        <div flex>Source</div>
+                                        <div flex>Destination</div>
+                                        <div flex>Total Size of Data </div>
+                                        <div flex>Time-to-Live</div>
+
+                                        <div flex>Protocol </div>
+
+                                    </div>
+
+                                    <!--<core-list id="list" data="{{allObjects}}" height="80" flex selectionEnabled="true" selection="{{selection}}">-->
+                                    <div class="list-wrapper">
+                                        <template repeat="{{model in allObjects}}" if="{{!loading}}">
+                                            <div class="row  {{ {selected: selectedItem.ID==model.ID} | tokenList }}" horizontal layout on-tap="{{selectedItemUpdate}}">
+                                                <div flex> {{model.ID}} </div>
+                                                <div flex> {{model.SourceIP}} </div>
+                                                <div flex> {{model.DestinationIP}} </div>
+                                                <div flex> {{model.TotalLength}} </div>
+                                                <div flex> {{model.TTL}} </div>
+                                                <div flex> {{model.Protocol}} </div>
+
+                                            </div>
+                                        </template>
+                                        <div horizontal layout center-justified>
+                                            <div style="padding-top: 30px;">
+                                                <paper-spinner active="{{loading}}"></paper-spinner>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--</core-list>-->
+
+                                    <div horizontal layout>
+                                        <div class="data" hidden?="{{!selection}}" flex>
+                                            <div class="data-segment">
+                                                <div class="data-heading">IP Version</div>
+                                                <div class="data-item">{{selectedItem.IPVersion}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Total Length</div>
+                                                <div class="data-item">{{selectedItem.TotalLength}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">TTL</div>
+                                                <div class="data-item">{{selectedItem.TTL}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Source IP</div>
+                                                <div class="data-item">{{selectedItem.SourceIP}}</div>
+                                            </div>
+                                            <div class="data-segment">
+                                                <div class="data-heading">Destination IP</div>
+                                                <div class="data-item">{{selectedItem.DestinationIP}}</div>
+                                            </div>
+
+                                            <!-- TCP -->
+                                            <div hidden?="{{selectedItem.Protocol != 'TCP'}}">
+                                                <h3>TCP</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Source Port</div>
+                                                    <div class="data-item">{{selectedItem.SourcePort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Destination Port</div>
+                                                    <div class="data-item">{{selectedItem.DestinationPort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Sequence No</div>
+                                                    <div class="data-item">{{selectedItem.SequenceNumber}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Acknowledge No</div>
+                                                    <div class="data-item">{{selectedItem.AcknowledgeNumber}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Window Size</div>
+                                                    <div class="data-item">{{selectedItem.WindowSize}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- HTTP -->
+                                            <div hidden?="{{selectedItem.Protocol != 'HTTP'}}">
+                                                <h3>HTTP</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Source Port</div>
+                                                    <div class="data-item">{{selectedItem.SourcePort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Destination Port</div>
+                                                    <div class="data-item">{{selectedItem.DestinationPort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Sequence No</div>
+                                                    <div class="data-item">{{selectedItem.SequenceNumber}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Acknowledge No</div>
+                                                    <div class="data-item">{{selectedItem.AcknowledgeNumber}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Window Size</div>
+                                                    <div class="data-item">{{selectedItem.WindowSize}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
+                                            </div>
+
+
+                                            <!-- UDP -->
+                                            <div hidden?="{{selectedItem.Protocol != 'UDP'}}">
+                                                <h3>UDP</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Source Port</div>
+                                                    <div class="data-item">{{selectedItem.SourcePort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Destination Port</div>
+                                                    <div class="data-item">{{selectedItem.DestinationPort}}</div>
+                                                </div>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
+                                            </div>
+
+
+                                            <!-- ICMP -->
+                                            <div hidden?="{{selectedItem.Protocol != 'ICMP'}}">
+                                                <h3>ICMP</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <!-- MISC -->
+                                            <div hidden?="{{selectedItem.Protocol != 'ICMP' || selectedItem.Protocol != 'TCP' || selectedItem.Protocol != 'UDP'}}">
+                                                <h3>MISC Protocol</h3>
+                                                <div class="data-segment">
+                                                    <div class="data-heading">Payload</div>
+                                                    <div class="data-item">{{selectedItem.Payload}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div flex hidden?="{{status == 'clear' || loading}}">
+                                <h2>Congestion Window</h2>
+                                <google-chart style="height: 60vh; width: 90vw;" type='line' width="800" data="{{response7}}">
+                                </google-chart>
+                            </div>
+                            
+                            <div flex hidden?="{{status == 'clear' || loading}}" style="margin: 20px;">
+                                <span style="font-weight: bold;">Average Packet Size Over the Captured Session: </span> {{packetAveragesResponse.totalLength/packetAveragesResponse.numPackets}}
+                                
+                            </div>
+                            
+                            <div flex hidden?="{{status == 'clear' || loading}}" style="margin: 20px;">
+                                <span style="font-weight: bold;">Average Diameter of the Network: </span> {{averageDiameterResponse}}
+                                
+                            </div>
+
+                            <div hidden?="{{interfacesResponse[selectedInterface].ip}}">
+                                <div horizontal layout style="margin-left: 20px;">
+                                    <div>
+                                        <h1>Please select a network interface</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <br>
+                            <br>
+                            <div horizontal layout center-justified>
+                                <div>
+                                    <paper-button on-tap="{{startThroughputTest}}">Test</paper-button>
+                                </div>
+                                <div>
+                                    <paper-spinner active="{{loading4}}"></paper-spinner>
+                                </div>
+                            </div>
+
+                            <div hidden?="{{response4 == null}}">
+                                <div horizontal layout center-justified flex>
+                                    <div>
+                                        <google-chart style="height: 60vh; width: 50vw;" type='line' width="800" data="{{response5}}">
+                                        </google-chart>
+                                    </div>
+
+                                    <div>
+                                        <google-chart style="height: 60vh; width: 50vw;" type='line' width="800" data="{{response52}}">
+                                        </google-chart>
+
+                                    </div>
+                                </div>
+                                <h2 style="margin-left: 50px;">Average Throughput: {{response6}} Mbps</h2>
+                            </div>
+
+
+
+                        </div>
+                    </core-pages>
+
+                </div>
+
+
+
+
+            </div>
+
+
+            <core-ajax auto method="GET" contentType="application/json" url="cgi-bin/network-interfaces.py" response="{{interfacesResponse}}" handleAs="json">
+            </core-ajax>
+
+
+            <core-ajax loading="{{loading}}" progress={{progress}} id="startPH" auto="false" method="GET" contentType="application/json" url="cgi-bin/Sniffer.py?interface={{interfacesResponse[selectedInterface].ip}}" response="{{response}}" on-core-response="{{infoloaded}}" handleAs="json">
+            </core-ajax>
+
+            <core-ajax loading="{{loading2}}" id="controller" auto="false" method="GET" contentType="application/json" url="cgi-bin/controller.py?status={{status}}" response="{{response2}}" handleAs="json">
+            </core-ajax>
+
+            <core-ajax loading="{{loading3}}" id="data" auto method="GET" contentType="application/json" url="data/log.json?trick={{jsonTrickster}}" response="{{response3}}" handleAs="json">
+            </core-ajax>
+            <core-ajax id="packetAverages" auto method="GET" contentType="application/json" url="data/packetAverages.json?trick={{jsonTrickster}}" response="{{packetAveragesResponse}}" handleAs="json">
+            </core-ajax>
+            <core-ajax id="averageDiameter" auto method="GET" contentType="application/json" url="data/averageDiameter.json?trick={{jsonTrickster}}" response="{{averageDiameterResponse}}" handleAs="json">
+            </core-ajax>
+
+            <core-ajax loading="{{loading4}}" id="throughputData" auto="false" method="GET" contentType="application/json" url="cgi-bin/throughputClient.py" response="{{response4}}" handleAs="json">
+            </core-ajax>
+
+            <core-ajax loading="{{loading5}}" id="throughputDataResponse" auto method="GET" contentType="application/json" url="data/throughputOutput.json?trick={{jsonTrickster}}" response="{{response5}}" handleAs="json">
+            </core-ajax>
+            <core-ajax loading="{{loading52}}" id="throughputRunningAverageResponse" auto method="GET" contentType="application/json" url="data/runningAverageOutput.json?trick={{jsonTrickster}}" response="{{response52}}" handleAs="json">
+            </core-ajax>
+
+            <core-ajax loading="{{loading6}}" id="throughputDataResponseAverage" auto method="GET" contentType="application/json" url="data/throughputOutputAverage.json?trick={{jsonTrickster}}" response="{{response6}}" handleAs="json">
+            </core-ajax>
+
+            <core-ajax loading="{{loading7}}" id="congestionWindowResponse" auto method="GET" contentType="application/json" url="data/congestionWindow.json?trick={{jsonTrickster}}" response="{{response7}}" handleAs="json">
+            </core-ajax>
+            
+            <core-ajax auto method="GET" contentType="application/json" url="cgi-bin/create-files.py" handleAs="json">
+            </core-ajax>
+
+
+
+        </template>
+
+
+        <script>
+            Polymer({
+                created: function () {
+                    this.selected = 0;
+                    this.udpObjects = {};
+                    this.allObjects = {};
+                    this.jsonTrickster = 0;
+                    this.status = "clear";
+                },
+                ready: function () {
+                    //this.status = "start";
+                    this.$.controller.go();
+                    this.count = 0;
+                },
+                clearPH: function () {
+                    this.status = "clear";
+                    this.$.controller.go();
+                },
+                startPH: function () {
+                    this.selectedItem = {};
+                    this.status = "start";
+                    this.$.controller.go();
+                    this.$.startPH.go();
+                    this.jsonTrickster += 1;
+                    //this.updateData();
+                },
+                updateData: function () {
+                    this.$.data.go();
+                    this.$.packetAverages.go();
+                    this.$.averageDiameter.go();
+                    this.$.congestionWindowResponse.go();
+                    this.jsonTrickster += 1;
+                    //location.reload();
+                },
+                stopPH: function () {
+                    this.jsonTrickster += 1;
+                    this.status = "stop";
+                    //this.$.startPH.abort();
+                    this.$.controller.go();
+                    this.updateData();
+                },
+                response2Changed: function () {
+                    this.jsonTrickster += 1;
+                    this.updateData();
+                },
+                loadingChanged: function () {
+                    this.rereshPH();
+                    if (this.loading) {
+                        //this.async(this.loadingChanged, null, 500);
+                    }
+                },
+                selectionChanged: function () {
+                    this.selectedItem = this.$.list.selection;
+                },
+                rereshPH: function () {
+                    this.jsonTrickster += 1;
+                    this.$.data.go();
+                    this.$.packetAverages.go();
+                    this.$.averageDiameter.go();
+                    this.$.congestionWindowResponse.go();
+                    this.filter = "";
+                },
+                selectedInterfaceChanged: function () {
+                    this.$.data.go();
+                    this.$.packetAverages.go();
+                    this.$.averageDiameter.go();
+                    this.$.congestionWindowResponse.go();
+                },
+                response3Changed: function () {
+                    this.allObjects = this.response3;
+                },
+                updateResponse: function () {
+                    this.allObjects = [];
+                    for (var key in this.response3) {
+                        if (this.response3.hasOwnProperty(key)) {
+                            if (this.response3[key]['Protocol'].toLowerCase() == this.filter.toLowerCase()) {
+                                this.allObjects.push(this.response3[key]);
+                            }
+                        }
+                    }
+                    if (this.filter == "") {
+                        this.allObjects = this.response3;
+                    }
+                },
+                startThroughputTest: function () {
+                    this.jsonTrickster += 1;
+                    this.$.throughputData.go();
+                },
+                response4Changed: function () {
+                    this.$.throughputDataResponse.go();
+                    this.$.throughputDataResponseAverage.go();
+                    this.$.throughputRunningAverageResponse.go();
+                },
+                loading4Changed: function () {
+                    this.$.throughputDataResponseAverage.go();
+                    this.$.throughputRunningAverageResponse.go();
+                    this.jsonTrickster += 1;
+                    if (this.loading4) {
+                        //this.async(this.loading4Changed, null, 500);
+                    }
+                },
+                selectedItemUpdate: function (e) {
+                    this.selection = true;
+                    this.selectedItem = e.target.templateInstance.model.model;
+                }
+
+            });
+        </script>
+
+    </polymer-element>
+
+    <packet-huffer></packet-huffer>
+
+</body>
+
+</html>
