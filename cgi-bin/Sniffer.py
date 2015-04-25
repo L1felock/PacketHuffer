@@ -16,7 +16,7 @@ interface = get.getvalue('interface')
 
 
 fp = open("data//log.json", "w")
-congestionFP = open("congestionWindow.json", "w")
+congestionFP = open("data//congestionWindow.json", "w")
 congestionWindowDict = dict()
 congestionWindowDict["cols"] = [{"id":"task","type":"string"},{"id":"congestionwindow","label":"Congestion Window","type":"number"}]
 congestionWindowDict["legend"] = {"position":"none"}
